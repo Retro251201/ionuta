@@ -1,0 +1,336 @@
+[
+ {
+  "name": "b_negozio",
+  "n": 10,
+  "min": 700,
+  "q": [
+   "phone repair shop interior counter",
+   "electronics repair shop interior workbench",
+   "small repair shop mall counter tools",
+   "phone repair shop interior counter photo"
+  ]
+ },
+ {
+  "name": "b_laboratorio",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "electronics repair workbench soldering cluttered",
+   "watch repair workbench tools",
+   "electronics repair workbench soldering cluttered photo"
+  ]
+ },
+ {
+  "name": "b_saracinesca",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "shop roller shutter half closed night mall",
+   "rolling shutter shop closed night",
+   "shop roller shutter half closed night mall photo"
+  ]
+ },
+ {
+  "name": "b_galleria",
+  "n": 10,
+  "min": 700,
+  "q": [
+   "shopping mall corridor shops italy",
+   "shopping mall interior hallway storefronts",
+   "empty shopping mall corridor",
+   "shopping mall corridor shops italy photo"
+  ]
+ },
+ {
+  "name": "b_galleria_notte",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "empty shopping mall at night closed",
+   "abandoned dark shopping mall corridor",
+   "empty shopping mall at night closed photo"
+  ]
+ },
+ {
+  "name": "b_foodcourt",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "food court shopping mall tables",
+   "empty food court mall",
+   "food court shopping mall tables photo"
+  ]
+ },
+ {
+  "name": "b_scalemobili",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "escalator shopping mall",
+   "escalators mall interior",
+   "escalator shopping mall photo"
+  ]
+ },
+ {
+  "name": "b_parcheggio",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "empty parking lot at night lights",
+   "empty mall parking lot night fog",
+   "empty parking lot at night lights photo"
+  ]
+ },
+ {
+  "name": "b_fermata",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "bus stop rain night",
+   "bus shelter rainy night city",
+   "bus stop rain night photo"
+  ]
+ },
+ {
+  "name": "b_strada",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "italian small town street night wet",
+   "provincial italian street night street lamps",
+   "italian small town street night wet photo"
+  ]
+ },
+ {
+  "name": "b_cameretta",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "messy teenage bedroom night desk lamp",
+   "small bedroom desk computer night",
+   "messy teenage bedroom night desk lamp photo"
+  ]
+ },
+ {
+  "name": "b_cucina",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "small old kitchen apartment italy",
+   "modest kitchen interior evening",
+   "small old kitchen apartment italy photo"
+  ]
+ },
+ {
+  "name": "b_casa_valya",
+  "n": 10,
+  "min": 700,
+  "q": [
+   "old russian apartment interior carpet on wall",
+   "soviet apartment living room carpet old photos",
+   "\u0441\u043e\u0432\u0435\u0442\u0441\u043a\u0430\u044f \u043a\u0432\u0430\u0440\u0442\u0438\u0440\u0430 \u043a\u043e\u0432\u0435\u0440 \u043d\u0430 \u0441\u0442\u0435\u043d\u0435 \u0438\u043d\u0442\u0435\u0440\u044c\u0435\u0440",
+   "old russian apartment interior carpet on wall photo"
+  ]
+ },
+ {
+  "name": "b_samovar",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "samovar kitchen table tea russian",
+   "russian kitchen samovar old",
+   "samovar kitchen table tea russian photo"
+  ]
+ },
+ {
+  "name": "b_finestra_neve",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "window snow falling night view",
+   "snow outside window night apartment",
+   "window snow falling night view photo"
+  ]
+ },
+ {
+  "name": "b_tetto",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "rooftop at night antennas city",
+   "flat roof building night antenna",
+   "rooftop at night antennas city photo"
+  ]
+ },
+ {
+  "name": "b_stazione",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "small train station platform night italy",
+   "railway station platform night empty",
+   "small train station platform night italy photo"
+  ]
+ },
+ {
+  "name": "b_cielo",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "starry night sky",
+   "night sky stars over town",
+   "starry night sky photo"
+  ]
+ },
+ {
+  "name": "b_mercatino",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "christmas market night stalls lights",
+   "mercatino di natale sera",
+   "christmas market night stalls lights photo"
+  ]
+ },
+ {
+  "name": "b_chiesa_ortodossa",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "orthodox church exterior winter",
+   "russian orthodox church small italy",
+   "orthodox church exterior winter photo"
+  ]
+ },
+ {
+  "name": "b_chiesa_interno",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "orthodox church interior icons candles",
+   "iconostasis candles church interior",
+   "orthodox church interior icons candles photo"
+  ]
+ },
+ {
+  "name": "b_ospedale",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "hospital corridor night",
+   "empty hospital hallway",
+   "hospital corridor night photo"
+  ]
+ },
+ {
+  "name": "b_residenza",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "nursing home room bed window",
+   "care home bedroom elderly",
+   "nursing home room bed window photo"
+  ]
+ },
+ {
+  "name": "b_tisaneria",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "tea shop interior shelves jars",
+   "herbal tea shop interior",
+   "tea shop interior shelves jars photo"
+  ]
+ },
+ {
+  "name": "b_guardiola",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "security room cctv monitors",
+   "security guard booth monitors night",
+   "security room cctv monitors photo"
+  ]
+ },
+ {
+  "name": "b_teatro",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "school theater stage curtains",
+   "school auditorium stage",
+   "school theater stage curtains photo"
+  ]
+ },
+ {
+  "name": "b_murmansk",
+  "n": 10,
+  "min": 600,
+  "q": [
+   "murmansk 1960s port photo",
+   "soviet arctic port snow old photo",
+   "\u043c\u0443\u0440\u043c\u0430\u043d\u0441\u043a 1960 \u0444\u043e\u0442\u043e \u043f\u043e\u0440\u0442",
+   "murmansk 1960s port photo photo"
+  ]
+ },
+ {
+  "name": "b_urss_strada",
+  "n": 8,
+  "min": 600,
+  "q": [
+   "soviet city street 1960s photo",
+   "leningrad 1960s street photo",
+   "soviet city street 1960s photo photo"
+  ]
+ },
+ {
+  "name": "b_chiosco",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "phone accessories kiosk mall",
+   "mall kiosk phone repair cart",
+   "phone accessories kiosk mall photo"
+  ]
+ },
+ {
+  "name": "b_cimitero",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "cemetery snow winter",
+   "cemetery winter trees",
+   "cemetery snow winter photo"
+  ]
+ },
+ {
+  "name": "b_fiume",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "river fog bridge night italy",
+   "foggy river town night",
+   "river fog bridge night italy photo"
+  ]
+ },
+ {
+  "name": "b_magazzino",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "storage back room shelves boxes",
+   "stockroom shelves cardboard boxes",
+   "storage back room shelves boxes photo"
+  ]
+ },
+ {
+  "name": "b_radiotower",
+  "n": 8,
+  "min": 700,
+  "q": [
+   "ham radio station room equipment",
+   "amateur radio shack transceivers",
+   "ham radio station room equipment photo"
+  ]
+ }
+]

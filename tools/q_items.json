@@ -1,0 +1,141 @@
+[
+ {
+  "name": "i_radio",
+  "n": 10,
+  "min": 400,
+  "q": [
+   "VEF Spidola radio",
+   "VEF Spidola transistor radio soviet",
+   "VEF Spidola radio photo"
+  ]
+ },
+ {
+  "name": "i_orologio",
+  "n": 10,
+  "min": 400,
+  "q": [
+   "Pobeda soviet wristwatch",
+   "soviet wrist watch Pobeda vintage",
+   "Pobeda soviet wristwatch photo"
+  ]
+ },
+ {
+  "name": "i_telefono",
+  "n": 10,
+  "min": 400,
+  "q": [
+   "soviet rotary telephone",
+   "vintage rotary phone black",
+   "soviet rotary telephone photo"
+  ]
+ },
+ {
+  "name": "i_carillon",
+  "n": 10,
+  "min": 400,
+  "q": [
+   "vintage music box open ballerina",
+   "old wooden music box open",
+   "vintage music box open ballerina photo"
+  ]
+ },
+ {
+  "name": "i_vhs",
+  "n": 8,
+  "min": 400,
+  "q": [
+   "VHS videocassette",
+   "VHS tape handwritten label",
+   "VHS videocassette photo"
+  ]
+ },
+ {
+  "name": "i_cassetta",
+  "n": 8,
+  "min": 400,
+  "q": [
+   "old audio cassette tape",
+   "soviet audio cassette",
+   "old audio cassette tape photo"
+  ]
+ },
+ {
+  "name": "i_samovar",
+  "n": 8,
+  "min": 400,
+  "q": [
+   "russian samovar",
+   "brass samovar",
+   "russian samovar photo"
+  ]
+ },
+ {
+  "name": "i_tiara",
+  "n": 8,
+  "min": 400,
+  "q": [
+   "plastic princess tiara",
+   "toy tiara",
+   "plastic princess tiara photo"
+  ]
+ },
+ {
+  "name": "i_lettera",
+  "n": 8,
+  "min": 400,
+  "q": [
+   "handwritten letter old paper",
+   "old letter envelope handwritten",
+   "handwritten letter old paper photo"
+  ]
+ },
+ {
+  "name": "i_smartphone",
+  "n": 8,
+  "min": 400,
+  "q": [
+   "broken smartphone cracked screen",
+   "cracked phone screen",
+   "broken smartphone cracked screen photo"
+  ]
+ },
+ {
+  "name": "i_foto_antica",
+  "n": 8,
+  "min": 400,
+  "q": [
+   "old soviet couple photo 1960s",
+   "vintage photo couple 1960s black white",
+   "old soviet couple photo 1960s photo"
+  ]
+ },
+ {
+  "name": "i_antenna",
+  "n": 8,
+  "min": 400,
+  "q": [
+   "ham radio antenna roof",
+   "dipole antenna rooftop",
+   "ham radio antenna roof photo"
+  ]
+ },
+ {
+  "name": "i_te",
+  "n": 8,
+  "min": 400,
+  "q": [
+   "glass tea holder podstakannik",
+   "russian tea glass holder",
+   "glass tea holder podstakannik photo"
+  ]
+ },
+ {
+  "name": "i_cacciavite",
+  "n": 8,
+  "min": 400,
+  "q": [
+   "precision screwdriver set phone repair",
+   "precision screwdriver set phone repair photo"
+  ]
+ }
+]

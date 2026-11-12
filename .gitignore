@@ -1,0 +1,11 @@
+renpy-8.5.3-sdk/
+raw/
+*.rpyc
+*.rpymc
+LaPrincipessa/game/cache/
+LaPrincipessa/game/saves/
+LaPrincipessa/log.txt
+LaPrincipessa/traceback.txt
+LaPrincipessa/errors.txt
+LaPrincipessa/lint.txt
+__pycache__/

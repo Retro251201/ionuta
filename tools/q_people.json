@@ -1,0 +1,11 @@
+[
+ {"name": "p_valya", "n": 25, "q": ["old russian babushka headscarf portrait", "elderly russian woman headscarf winter coat portrait", "бабушка в платке портрет", "very old wrinkled woman headscarf portrait russia", "babushka headscarf coat market russia old woman"]},
+ {"name": "p_rino", "n": 15, "q": ["older italian man mustache portrait grumpy", "elderly man mustache workshop apron portrait", "italian shopkeeper old man portrait"]},
+ {"name": "p_dado", "n": 15, "q": ["young italian man laughing portrait", "young man grinning hoodie portrait", "20 year old man smiling curly hair portrait"]},
+ {"name": "p_giulia", "n": 15, "q": ["young woman shop assistant apron portrait", "young italian woman portrait smiling dark hair", "young woman barista apron portrait"]},
+ {"name": "p_mario", "n": 15, "q": ["security guard uniform portrait man", "middle aged security guard portrait", "night watchman uniform portrait"]},
+ {"name": "p_arkadij", "n": 15, "q": ["russian businessman portrait coat serious", "man in suit and overcoat portrait serious 40", "businessman long coat portrait"]},
+ {"name": "p_max", "n": 15, "q": ["flashy man sunglasses gold chain portrait", "cocky young man sunglasses portrait", "show off guy leather jacket sunglasses portrait"]},
+ {"name": "p_valya_giovane", "n": 15, "q": ["1960s soviet young woman portrait photo", "vintage photo young russian woman 1960s headscarf", "советская девушка 1960 фото портрет"]},
+ {"name": "p_lev", "n": 15, "q": ["soviet radio operator 1960s photo", "vintage photo young soviet sailor 1960s portrait", "советский радист фото"]}
+]
