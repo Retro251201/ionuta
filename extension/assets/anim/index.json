@@ -1,9 +1,65 @@
 [
- { "id": "vrma_greet", "name": "Inchino", "file": "anim/VRMA_01.vrma", "loop": false, "category": "gesto" },
- { "id": "vrma_show", "name": "Posa corpo", "file": "anim/VRMA_02.vrma", "loop": false, "category": "posa" },
- { "id": "vrma_peace", "name": "Peace", "file": "anim/VRMA_03.vrma", "loop": false, "category": "gesto" },
- { "id": "vrma_shoot", "name": "Spara", "file": "anim/VRMA_04.vrma", "loop": false, "category": "gesto" },
- { "id": "vrma_spin", "name": "Giravolta", "file": "anim/VRMA_05.vrma", "loop": false, "category": "posa" },
- { "id": "vrma_model", "name": "Posa da modella", "file": "anim/VRMA_06.vrma", "loop": false, "category": "posa" },
- { "id": "vrma_crouch", "name": "Accovacciata", "file": "anim/VRMA_07.vrma", "loop": false, "category": "posa" }
+ {
+  "id": "vrma_greet",
+  "name": "Inchino",
+  "file": "anim/VRMA_01.vrma",
+  "loop": false,
+  "category": "gesto"
+ },
+ {
+  "id": "vrma_show",
+  "name": "Posa corpo",
+  "file": "anim/VRMA_02.vrma",
+  "loop": false,
+  "category": "posa"
+ },
+ {
+  "id": "vrma_peace",
+  "name": "Peace",
+  "file": "anim/VRMA_03.vrma",
+  "loop": false,
+  "category": "gesto"
+ },
+ {
+  "id": "vrma_shoot",
+  "name": "Spara",
+  "file": "anim/VRMA_04.vrma",
+  "loop": false,
+  "category": "gesto"
+ },
+ {
+  "id": "vrma_spin",
+  "name": "Giravolta",
+  "file": "anim/VRMA_05.vrma",
+  "loop": false,
+  "category": "posa"
+ },
+ {
+  "id": "vrma_model",
+  "name": "Posa da modella",
+  "file": "anim/VRMA_06.vrma",
+  "loop": false,
+  "category": "posa"
+ },
+ {
+  "id": "vrma_crouch",
+  "name": "Accovacciata",
+  "file": "anim/VRMA_07.vrma",
+  "loop": false,
+  "category": "posa"
+ },
+ {
+  "id": "dance_bodyroll",
+  "name": "Body roll",
+  "file": "anim/slow_body_roll.vrma",
+  "loop": true,
+  "category": "ballo"
+ },
+ {
+  "id": "dance_club",
+  "name": "Club",
+  "file": "anim/club_phrase.vrma",
+  "loop": true,
+  "category": "ballo"
+ }
 ]
