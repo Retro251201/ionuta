@@ -38,15 +38,15 @@ body:not([data-mode="loading"]) .loading { opacity: 0; pointer-events: none; }
 .spinner { width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--line); border-top-color: var(--sakura); animation: spin .9s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.rail { position: absolute; right: 14px; top: 50%; transform: translateY(-58%); display: flex; flex-direction: column; gap: 8px; }
+.rail { position: absolute; right: 14px; top: 50%; transform: translateY(-58%); display: flex; flex-direction: column; gap: 8px; z-index: 7; }
 body:not([data-mode="3d"]) .rail { display: none; }
 .rail button { width: 44px; height: 44px; border-radius: 13px; border: 1px solid var(--line); background: var(--panel); backdrop-filter: blur(10px); color: var(--text); cursor: pointer; display: grid; place-items: center; transition: transform .12s, border-color .2s, background .2s; }
 .rail button:hover { transform: translateX(-2px); border-color: rgba(255, 255, 255, .28); }
 .rail button.on { border-color: var(--sakura); background: rgba(255, 143, 183, .16); }
 .rail svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 
-.dock { position: absolute; left: 14px; right: 14px; bottom: 14px; max-width: 760px; margin: 0 auto; padding: 12px 14px 8px; border-radius: 18px; border: 1px solid var(--line);
-  background: var(--panel); backdrop-filter: blur(14px); box-shadow: 0 18px 50px rgba(0, 0, 0, .45); animation: rise .5s ease both; }
+.dock { position: absolute; left: 14px; right: 14px; bottom: 14px; max-width: 760px; margin: 0 auto; padding: 12px 14px 8px; border-radius: 18px; border: 1px solid var(--line); max-height: min(60vh, 520px); overflow-y: auto; overscroll-behavior: contain;
+  background: var(--panel); backdrop-filter: blur(14px); box-shadow: 0 18px 50px rgba(0, 0, 0, .45); animation: rise .5s ease both; z-index: 4; }
 @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
 .row { display: flex; align-items: center; gap: 10px; min-height: 36px; }
 .row + .row { margin-top: 6px; }

@@ -6,9 +6,9 @@
 export const CHARACTER_VERSION = 2;
 
 const DEFAULT_OUTFIT = {
-  underTop: { item: 'under_bra_basic' }, underBottom: { item: 'under_brief_basic' },
-  top: { item: 'top_tshirt_basic' }, bottom: { item: 'bottom_skirt_pleated' },
-  legwear: { item: 'legwear_socks_knee' }, shoes: { item: 'shoes_loafers' }
+  underTop: { item: 'bra_lace' }, underBottom: { item: 'panties_lace' },
+  top: { item: 'top_crop' }, bottom: { item: 'bottom_mini' },
+  legwear: { item: 'legwear_thigh_highs' }, shoes: { item: 'shoes_ankle_boots' }
 };
 
 export function defaultCharacter() {

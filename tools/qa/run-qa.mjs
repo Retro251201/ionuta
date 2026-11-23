@@ -353,14 +353,15 @@ async function stage(env) {
     const e = window.__dcStage.engine, w = e.wardrobe, out = {};
     const ids = () => Object.fromEntries(Array.from(w.worn, ([slot, x]) => [slot, x.garment.mesh.uuid]));
     const before = ids(), tris0 = w.visibleBodyTriangles, ground0 = w.groundOffset;
+    const shoe0 = w.itemIn('shoes'), leg0 = w.itemIn('legwear'), nSlots0 = w.worn.size;
     out.unequip = w.unequip('shoes');
     const mid = ids();
-    out.othersUntouched = Object.keys(mid).every((s) => mid[s] === before[s]) && !('shoes' in mid) && Object.keys(mid).length === 5;
+    out.othersUntouched = Object.keys(mid).every((s) => mid[s] === before[s]) && !('shoes' in mid) && Object.keys(mid).length === nSlots0 - 1;
     out.groundLower = w.groundOffset < ground0; out.rootFollows = Math.abs(e.avatar.root.position.y - w.groundOffset) < 1e-9;
-    out.reequip = w.equip('shoes', 'shoes_loafers');
-    // togliendo le calze torna visibile la pelle delle gambe (maschera del corpo aggiornata)
-    w.unequip('legwear'); out.skinBack = w.visibleBodyTriangles - tris0; w.equip('legwear', 'legwear_socks_knee');
-    out.restored = w.visibleBodyTriangles === tris0 && Math.abs(w.groundOffset - ground0) < 1e-9 && Object.keys(ids()).length === 6;
+    out.reequip = w.equip('shoes', shoe0);
+    // togliendo le calze/calzini torna visibile la pelle delle gambe (maschera del corpo aggiornata)
+    w.unequip('legwear'); out.skinBack = w.visibleBodyTriangles - tris0; w.equip('legwear', leg0);
+    out.restored = w.visibleBodyTriangles === tris0 && Math.abs(w.groundOffset - ground0) < 1e-9 && w.worn.size === nSlots0;
     out.wrongSlot = w.equip('top', 'bottom_skirt_pleated'); out.unknown = w.equip('top', 'capo_inesistente'); out.badSlot = w.equip('naso', 'top_tshirt_basic');
     // colore di un capo: cambia solo quel capo
     const b2 = ids();
@@ -371,7 +372,7 @@ async function stage(env) {
     out.outfitTop = w.outfit.top;
     // rimbocco: togliendo il capo "sotto" la maglia viene ricostruita con l'orlo libero
     const y = (slot) => { const g = w.worn.get(slot).garment.mesh.geometry; g.computeBoundingBox(); return g.boundingBox.min.y; };
-    const tucked = y('top');
+    w.equip('bottom', 'bottom_skirt_pleated'); const tucked = y('top');
     w.unequip('bottom'); const loose = y('top');
     w.equip('bottom', 'bottom_skirt_pleated'); out.tuckAgain = Math.abs(y('top') - tucked) < 1e-6;
     out.tucked = tucked; out.loose = loose;
@@ -415,6 +416,16 @@ async function stage(env) {
   await page.click('#faces [data-face="head_02"]');
   await page.waitForFunction(() => window.__dcStage.engine.photoHead.id === 'head_02', null, { timeout: 60000 });
   const face2 = await page.evaluate(async () => { const e = window.__dcStage.engine, st = await chrome.storage.local.get(['dc_avatar', 'dc_settings']); return { src: e.photoHead.identity().textureSrc, saved: st.dc_avatar.head, headId: st.dc_settings.headId, skin: e.avatar.skinTone }; });
+  // guardaroba dall'interfaccia: un look preimpostato e un singolo capo, applicati e salvati
+  await page.click('#looks [data-look="date_night"]');
+  await page.waitForFunction(() => window.__dcStage.engine.def.outfit.dress && window.__dcStage.engine.def.outfit.dress.item === 'dress_bodycon', null, { timeout: 60000 });
+  const look = await page.evaluate(async () => { const st = await chrome.storage.local.get('dc_avatar'); return { saved: st.dc_avatar.outfit.dress && st.dc_avatar.outfit.dress.item, worn: !!window.__dcStage.engine.wardrobe.worn.get('dress') }; });
+  check('interfaccia: look preimpostato "Date Night" indossato e salvato in dc_avatar', look.saved === 'dress_bodycon' && look.worn, look.saved);
+  await page.click('#wslots [data-slot="shoes"]');
+  await page.click('#witems [data-item="shoes_pumps"]');
+  await page.waitForFunction(() => window.__dcStage.engine.wardrobe.itemIn('shoes') === 'shoes_pumps', null, { timeout: 60000 });
+  const equip = await page.evaluate(async () => { const st = await chrome.storage.local.get('dc_avatar'); return st.dc_avatar.outfit.shoes && st.dc_avatar.outfit.shoes.item; });
+  check('interfaccia: cambio di un singolo capo (scarpe → décolleté) applicato e salvato', equip === 'shoes_pumps', equip);
   await page.click('#lights [data-light="neon"]');
   const neon = await page.evaluate(async () => { const e = window.__dcStage.engine, st = await chrome.storage.local.get('dc_settings'); return { id: e.lighting, rim: e.render.lights.rim.color.getHexString(), saved: st.dc_settings.light3d, bg: document.querySelector('.backdrop').style.background.length }; });
   check('interfaccia: preset di luce Neon Night applicato alla scena e salvato', neon.id === 'neon' && neon.rim === '7af7ff' && neon.saved === 'neon' && neon.bg > 20, '#' + neon.rim);

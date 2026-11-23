@@ -15,6 +15,10 @@ const def = defaultCharacter();
 const head = q.get('head') || 'head_04';
 if (head === '3d') def.head.mode = '3d'; else { def.head.mode = 'photo'; def.head.photoId = head; }
 if (q.get('hair')) def.hair.style = q.get('hair') === 'none' ? null : q.get('hair');
+import { PRESET_LOOKS, ITEMS } from '/extension/src/engine3d/wardrobe/catalog/index.js';
+if (q.get('preset')) { const l = PRESET_LOOKS.find((p) => p.id === q.get('preset')); if (l) def.outfit = JSON.parse(JSON.stringify(l.outfit)); }
+if (q.get('wear')) { def.outfit = {}; for (const pair of q.get('wear').split(',')) { const [slot, item] = pair.split(':'); def.outfit[slot] = { item }; } }
+if (q.get('item')) { const it = ITEMS.find((i) => i.id === q.get('item')); if (it) def.outfit = { [it.slot]: { item: it.id } }; }
 const engine = new CharacterEngine(document.getElementById('stage'), { quality: q.get('q') || 'high', autoPause: false, resolveHead });
 await engine.load(def);
 engine.render.stop();
