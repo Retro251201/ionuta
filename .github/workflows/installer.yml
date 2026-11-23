@@ -1,0 +1,50 @@
+# Costruisce l'installer Windows dell'app desktop su un server Windows di GitHub e lo pubblica nelle Releases.
+# Parte da solo a ogni tag v* (es. v1.0.0) oppure a mano: Actions → "Installer Windows" → Run workflow.
+name: Installer Windows
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Dipendenze
+        run: npm ci
+
+      - name: Test
+        run: npm test
+
+      - name: Installer (NSIS)
+        run: node tools/desktop/installer.mjs win
+
+      - name: Salva l'installer come artefatto
+        uses: actions/upload-artifact@v4
+        with:
+          name: Desktop-Companion-Setup
+          path: dist/installer/*.exe
+          if-no-files-found: error
+
+      - name: Pubblica nella release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_type == 'tag' && github.ref_name || 'v1.0.0' }}
+          name: Desktop Companion ${{ github.ref_type == 'tag' && github.ref_name || 'v1.0.0' }}
+          files: dist/installer/*.exe
+          body: |
+            Installer Windows (x64) di Desktop Companion.
+            Scarica **Desktop-Companion-Setup-*.exe**, aprilo e segui l'installazione.
+            Alla fine la ragazza compare in basso a destra sul desktop; doppio clic o tasto destro su di lei apre lo Studio.
+            Windows potrebbe mostrare "PC protetto da Windows" perché l'installer non è firmato: Ulteriori informazioni → Esegui comunque.

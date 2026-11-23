@@ -1,0 +1,23 @@
+{
+  "appId": "com.retro251201.desktopcompanion",
+  "productName": "Desktop Companion",
+  "copyright": "Uso personale",
+  "directories": { "app": "../dist/.stage", "output": "../dist/installer", "buildResources": "build" },
+  "asar": false,
+  "npmRebuild": false,
+  "win": {
+    "target": [{ "target": "nsis", "arch": ["x64"] }],
+    "icon": "build/icon.png"
+  },
+  "nsis": {
+    "oneClick": false,
+    "perMachine": false,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "shortcutName": "Desktop Companion",
+    "runAfterFinish": true,
+    "artifactName": "Desktop-Companion-Setup-${version}.exe"
+  },
+  "linux": { "target": ["AppImage"], "category": "Utility", "icon": "build/icon.png" }
+}

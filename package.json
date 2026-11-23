@@ -12,13 +12,15 @@
     "check": "npm test && npm run qa",
     "desktop": "electron desktop/main.js",
     "dist:win": "node tools/desktop/build.mjs win32",
-    "dist:linux": "node tools/desktop/build.mjs linux"
+    "dist:linux": "node tools/desktop/build.mjs linux",
+    "installer": "node tools/desktop/installer.mjs win"
   },
   "devDependencies": {
     "@electron/packager": "^20.3.0",
     "@pixiv/three-vrm": "^3.5.5",
     "@pixiv/three-vrm-animation": "^3.5.5",
     "electron": "^45.4.1",
+    "electron-builder": "^26.18.0",
     "esbuild": "^0.28.2",
     "playwright-core": "^1.65.0",
     "sharp": "^0.35.5",
