@@ -483,13 +483,25 @@ async function stage(env) {
   await page.screenshot({ path: `${OUT}/35_stage_high_wave.png` });
   check('qualità High: contorni toon e ombre attivi nella pagina dell\'estensione', still.quality === 'high' && still.outline && still.tris > 60000, `${still.tris} triangoli con contorni e ombre`);
 
+  // --- cambio modello dal menu: personaggio completo CC0 con la testa fotografica ---
+  await page.click('#models [data-model="vivi"]');
+  await page.waitForFunction(() => window.__dcStage && window.__dcStage.ready && window.__dcStage.engine && window.__dcStage.engine.model === 'vivi', null, { timeout: 150000 });
+  const mdl = await page.evaluate(async () => {
+    const e = window.__dcStage.engine, st = await chrome.storage.local.get('dc_avatar');
+    return { kind: e.modelKind, wardrobe: !!e.wardrobe, hair: !!e.hair, photo: e.photoHead.active, tris: e.stats().triangles,
+      grounded: Math.abs(e.avatar.root.position.y - e.groundOffsetValue()) < 1e-6, rowHidden: document.querySelector('#rowWardrobe').hidden,
+      menu: document.querySelectorAll('#models button').length, saved: st.dc_avatar.model };
+  });
+  check('modello: "Vivi" (personaggio completo) scelto dal menu, con testa fotografica e senza guardaroba modulare', mdl.kind === 'full' && !mdl.wardrobe && !mdl.hair && mdl.photo && mdl.rowHidden && mdl.menu === 5 && mdl.saved === 'vivi' && mdl.grounded, `menu ${mdl.menu} modelli, ${mdl.tris} tri`);
+  await page.screenshot({ path: `${OUT}/36_stage_model_vivi.png` });
+
   // --- rilascio delle risorse GPU ---
   const mem = await page.evaluate(() => {
     const e = window.__dcStage.engine, info = e.render.renderer.info.memory, before = { geometries: info.geometries, textures: info.textures };
     e.dispose();
     return { before, after: { geometries: info.geometries, textures: info.textures } };
   });
-  check('memoria GPU: dispose rilascia geometrie e texture', mem.before.geometries > 10 && mem.after.geometries === 0 && mem.after.textures === 0, `geometrie ${mem.before.geometries}→${mem.after.geometries}, texture ${mem.before.textures}→${mem.after.textures}`);
+  check('memoria GPU: dispose rilascia geometrie e texture', mem.before.geometries >= 8 && mem.after.geometries === 0 && mem.after.textures === 0, `geometrie ${mem.before.geometries}→${mem.after.geometries}, texture ${mem.before.textures}→${mem.after.textures}`);
   check('offline: nessuna richiesta fuori dal pacchetto dell\'estensione', external.length === 0, external.slice(0, 3).join(' '));
   await page.close(); await setup.close();
 

@@ -1,0 +1,37 @@
+<!doctype html><meta charset="utf-8"><title>vrm view</title>
+<style>html,body{margin:0;height:100%;background:#2b2e40;overflow:hidden}#stage{position:absolute;inset:0}</style>
+<div id="stage"></div>
+<script src="/extension/src/shared/heads.generated.js"></script>
+<script type="module">
+// Visualizza un VRM qualsiasi (per valutare modelli candidati) con la testa fotografica applicata.
+// ?file=/.cache/models/Vivi.vrm &head=head_04|none &frame=full|upper|face &az=gradi &t=secondi
+import { THREE } from '/extension/src/engine3d/lib.js';
+import { RenderingEngine } from '/extension/src/engine3d/render/rendering-engine.js';
+import { AssetManager } from '/extension/src/engine3d/assets/asset-manager.js';
+import { loadAvatar } from '/extension/src/engine3d/avatar/avatar-loader.js';
+import { PhotoHead } from '/extension/src/engine3d/custom/photo-head.js';
+const q = new URLSearchParams(location.search);
+const re = new RenderingEngine(document.getElementById('stage'), { quality: q.get('q') || 'high', autoPause: false });
+re.setBackground(new THREE.Color('#' + (q.get('bg') || '3a3d52')));
+re.setLighting({ ambient: 0.95, key: 2.0, rim: 0.7 });
+const assets = new AssetManager();
+const avatar = await loadAvatar(assets, q.get('file'));
+re.scene.add(avatar.root);
+const headId = q.get('head') || 'head_04';
+if (headId !== 'none') {
+  const e = globalThis.DC.HEADS.find((x) => x.id === headId);
+  const ph = new PhotoHead({ avatar, assets });
+  await ph.set({ id: e.id, w: e.w, h: e.h, anchorX: e.anchorX, anchorY: e.anchorY, faceW: e.faceW, skin: e.skin, url: new URL('/extension/' + e.file, location.href).href });
+  if (/^#[0-9a-f]{6}$/i.test(e.skin || '')) avatar.setSkinTone(e.skin);
+}
+re.scene.updateMatrixWorld(true);
+const head = new THREE.Vector3(); avatar.bones.head.getWorldPosition(head);
+const FR = { full: [0, head.y * 0.52, head.y * 2.9], upper: [0, head.y * 0.86, head.y * 1.5], face: [0, head.y, head.y * 0.78] };
+const [ty, dist] = (() => { const f = FR[q.get('frame') || 'full']; return [f[1], f[2]]; })();
+const az = Number(q.get('az') || 0) * Math.PI / 180;
+re.camera.position.set(Math.sin(az) * dist, ty, Math.cos(az) * dist);
+re.camera.lookAt(0, ty, 0);
+for (let i = 0; i < Math.round(Number(q.get('t') || 1) * 30); i++) { avatar.update(1 / 30); re.step(1 / 30); }
+re.stop();
+window.__ready = true;
+</script>

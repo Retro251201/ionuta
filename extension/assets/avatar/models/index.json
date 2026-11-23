@@ -1,0 +1,42 @@
+[
+ {
+  "id": "vivi",
+  "name": "Vivi",
+  "desc": "Dolce, caschetto castano, abito verde",
+  "file": "avatar/models/vivi.vrm",
+  "kind": "full",
+  "source": "Vivi",
+  "license": "CC0-1.0",
+  "tris": 25834
+ },
+ {
+  "id": "victoria",
+  "name": "Victoria",
+  "desc": "Elegante, capelli corti, look scuro",
+  "file": "avatar/models/victoria.vrm",
+  "kind": "full",
+  "source": "Victoria_Rubin",
+  "license": "CC0-1.0",
+  "tris": 28928
+ },
+ {
+  "id": "vita",
+  "name": "Vita",
+  "desc": "Cyber, pixie, stile futuristico",
+  "file": "avatar/models/vita.vrm",
+  "kind": "full",
+  "source": "Vita",
+  "license": "CC0-1.0",
+  "tris": 26130
+ },
+ {
+  "id": "shino",
+  "name": "Shino",
+  "desc": "Intensa, capelli lunghi",
+  "file": "avatar/models/shino.vrm",
+  "kind": "full",
+  "source": "Sendagaya_Shino",
+  "license": "CC0-1.0",
+  "tris": 31211
+ }
+]

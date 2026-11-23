@@ -75,6 +75,21 @@ del repository concede **uso personale e commerciale, modifica, redistribuzione 
 | `avatar/female.vrm` | VRoid_V110_Female_v1.1.3 | corpo + viso (54 ossa, 124 morph del viso, 70 espressioni) e fisica spring del seno | rimossi vestiti e capelli; primitive fuse; texture WebP ≤ 2048 px; miniatura rimossa (`tools/pipeline/build-female.mjs`) |
 | `hair/vroid_long.vrm` | VRoid_V110_Female_v1.1.3 | sola acconciatura originale (mesh + ossa e spring bone) | primitive fuse, texture WebP ≤ 1024 px |
 
+### 2-ter. Personaggi completi selezionabili (CC0)
+
+Modelli **personaggio completo** (corpo, viso, capelli e vestiti già pronti) tra cui scegliere nel menu "Modello";
+sul modello selezionato il motore applica soltanto la testa fotografica. Sono i **modelli di esempio VRoid Studio
+(beta)** di pixiv Inc., **CC0 1.0** (stessa fonte e verifica della sezione 2: `tools/pipeline/sources.mjs`,
+metadati `licenseName: "CC0"`). Ottimizzati da `tools/pipeline/build-models.mjs` (texture WebP ≤ 1024 px, primitive
+fuse, miniatura rimossa). Sono personaggi di esempio originali di VRoid, non personaggi di franchise di terzi.
+
+| File nel pacchetto | Sorgente (chiave in `sources.mjs`) | Licenza |
+|---|---|---|
+| `avatar/models/vivi.vrm` | Vivi | CC0-1.0 |
+| `avatar/models/victoria.vrm` | Victoria_Rubin | CC0-1.0 |
+| `avatar/models/vita.vrm` | Vita | CC0-1.0 |
+| `avatar/models/shino.vrm` | Sendagaya_Shino | CC0-1.0 |
+
 ## 3. Contenuti generati dal progetto (nessun asset esterno)
 
 | Contenuto | Come nasce | Licenza |
