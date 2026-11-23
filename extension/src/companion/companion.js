@@ -3,6 +3,7 @@
 // e ogni tanto una posa; un clic avvia una reazione. Comunica con chi la ospita via postMessage.
 import { CharacterEngine } from '../engine3d/core/character-engine.js';
 import { loadCharacter } from '../engine3d/save/character-store.js';
+import { THREE } from '../engine3d/lib.js';
 
 const DC = globalThis.DC;
 const inExtension = typeof chrome !== 'undefined' && !!(chrome.runtime && chrome.runtime.id);
@@ -43,12 +44,24 @@ async function boot() {
     const gestures = engine.anim.list().filter((c) => !c.loop).map((c) => c.id);
     const playRandom = () => { if (gestures.length) engine.anim.play(gestures[Math.floor(Math.random() * gestures.length)]); };
 
+    // hit-test della sagoma: la pagina ospite chiede se il cursore è sul personaggio (coordinate normalizzate)
+    const ray = new THREE.Raycaster();
+    const isOver = (nx, ny) => { ray.setFromCamera({ x: nx, y: ny }, engine.render.camera); return ray.intersectObject(engine.avatar.root, true).length > 0; };
+    window.addEventListener('message', (e) => { const m = e.data; if (m && m.type === 'dc-hit') parent.postMessage({ type: 'dc-hit-res', over: isOver(m.nx, m.ny) }, '*'); });
+
     if (embed) {
       // trascinamento: cattura il puntatore e invia gli spostamenti alla pagina ospite; un tocco senza
       // spostamento è una reazione. La pagina companion non ha pannelli: è solo il personaggio.
       const cv = engine.render.canvas;
       let drag = null, moved = false;
       cv.style.cursor = 'grab';
+      // mentre l'overlay è interattivo, segnala alla pagina quando il cursore esce dalla sagoma (per ridare i clic al sito)
+      cv.addEventListener('pointermove', (e) => {
+        if (drag) return;
+        const r = cv.getBoundingClientRect();
+        const nx = ((e.clientX - r.left) / r.width) * 2 - 1, ny = -(((e.clientY - r.top) / r.height) * 2 - 1);
+        parent.postMessage({ type: 'dc-hit-res', over: isOver(nx, ny) }, '*');
+      });
       cv.addEventListener('pointerdown', (e) => {
         if (e.button !== 0) return;
         drag = { id: e.pointerId }; moved = false;
