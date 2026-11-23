@@ -41,8 +41,22 @@ async function boot() {
     document.body.dataset.mode = '3d';
     engine.camera.frame(params.get('frame') || 'full', { animate: false, lift: engine.groundOffsetValue() });
 
+    // più vita: transizioni morbide e sguardo che segue il cursore anche quando l'orbita è disattivata
+    engine.anim.fade = 0.55;
+    const cvv = engine.render.canvas;
+    addEventListener('pointermove', (e) => { try { engine.look.pointer(e, cvv); } catch (_) {} }, { passive: true });
+
     const gestures = engine.anim.list().filter((c) => !c.loop).map((c) => c.id);
-    const playRandom = () => { if (gestures.length) engine.anim.play(gestures[Math.floor(Math.random() * gestures.length)]); };
+    let lastGesture = -1;
+    const playRandom = () => {
+      if (!gestures.length) return;
+      let i = Math.floor(Math.random() * gestures.length);
+      if (gestures.length > 1 && i === lastGesture) i = (i + 1) % gestures.length; // mai la stessa due volte di fila
+      lastGesture = i;
+      engine.anim.play(gestures[i]);
+    };
+    // pianificatore morbido: una posa ogni 7–13 s, non a cadenza fissa (più naturale, meno meccanico)
+    const schedule = () => setTimeout(() => { if (!document.hidden) playRandom(); schedule(); }, 7000 + Math.random() * 6000);
 
     // hit-test della sagoma: la pagina ospite chiede se il cursore è sul personaggio (coordinate normalizzate)
     const ray = new THREE.Raycaster();
@@ -104,10 +118,10 @@ async function boot() {
       };
       cv.addEventListener('pointerup', endDrag);
       cv.addEventListener('pointercancel', endDrag);
-      setInterval(() => { if (!document.hidden) playRandom(); }, 15000);
+      schedule();
     } else if (!stat) {
       engine.render.canvas.addEventListener('pointerdown', (e) => { if (e.button === 0) { playRandom(); if (DC.line) say(DC.line('idle')); } });
-      setInterval(() => { if (!document.hidden) playRandom(); }, 15000);
+      schedule();
     }
 
     // comandi da chi ospita (content script / popup) e dal service worker

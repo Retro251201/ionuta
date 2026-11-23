@@ -249,7 +249,7 @@ async function stage(env) {
   const prep = (hair) => setup.evaluate(async (h) => { await DC.saveSettings({ hairStyle: h, quality3d: 'medium' }); await chrome.storage.local.remove('dc_avatar'); }, hair);
   const page = await ctx.newPage();
   page.on('request', (r) => { if (!/^(chrome-extension:|data:|blob:)/.test(r.url())) external.push(r.url()); });
-  await page.setViewportSize({ width: 560, height: 800 });
+  await page.setViewportSize({ width: 1180, height: 820 });
 
   // --- migrazione dalle impostazioni v0.2 ---
   await prep('twin');
@@ -272,7 +272,7 @@ async function stage(env) {
     for (const [slot, w] of e.wardrobe.worn) worn[slot] = { item: w.item.id, tris: w.garment.stats.tris, skinned: !!(w.garment.mesh && w.garment.mesh.isSkinnedMesh && w.garment.mesh.skeleton === e.avatar.bodyMesh.skeleton) };
     return {
       mode: s.mode, source: s.source, headMode: s.def.head.mode, engineHead: e.headMode, photoId: s.def.head.photoId, ident: e.photoHead.identity(),
-      animeFaceHidden: e.avatar.faceMeshes.every((m) => !m.visible), hairCut: e.hair.hiddenTriangles || 0, onHeadBone: !!(e.photoHead.current && e.photoHead.current.group.parent === e.avatar.bones.head), dockShown: !document.querySelector('#dock').hidden,
+      animeFaceHidden: e.avatar.faceMeshes.every((m) => !m.visible), hairCut: e.hair.hiddenTriangles || 0, onHeadBone: !!(e.photoHead.current && e.photoHead.current.group.parent === e.avatar.bones.head),
       bones: Object.values(e.avatar.bones).filter(Boolean).length, skinned: e.avatar.bodyMesh.isSkinnedMesh, morphs: Object.keys(e.avatar.face.skin.morphTargetDictionary || {}).length,
       expressions: Object.keys(e.avatar.vrm.expressionManager.expressionMap).length, license: e.avatar.vrm.meta.licenseName,
       hair: e.hair.style, hairMeshes: e.hair.current ? e.hair.current.meshes.length : 0, hairJoints: e.hair.current && e.hair.current.vrm.springBoneManager ? e.hair.current.vrm.springBoneManager.joints.size : 0,
@@ -398,8 +398,10 @@ async function stage(env) {
 
   // --- interfaccia: ogni controllo ha un effetto reale e persistente ---
   await page.evaluate(() => window.__dcStage.engine.render.start());
+  await page.click('#catbar [data-cat="hair"]');
   await page.click('#hair [data-hair="twintail"]');
   await page.waitForFunction(() => window.__dcStage.engine.hair.style === 'twintail' && window.__dcStage.def.hair.style === 'twintail', null, { timeout: 60000 });
+  await page.click('#catbar [data-cat="quality"]');
   await page.click('#quality [data-q="high"]');
   const uiHigh = await page.evaluate(async () => {
     const e = window.__dcStage.engine, st = await chrome.storage.local.get(['dc_avatar', 'dc_settings']);
@@ -410,6 +412,7 @@ async function stage(env) {
   check('interfaccia: preset di qualità High (contorni e ombre) applicato e salvato', uiHigh.quality === 'high' && uiHigh.saved === 'high' && uiHigh.outline && uiHigh.shadows);
   await page.click('#quality [data-q="low"]');
   await page.click('#frames [data-frame="face"]');
+  await page.click('#catbar [data-cat="pose"]');
   await page.click('#clips [data-clip="wave"]');
   const uiLow = await page.evaluate(async () => {
     const e = window.__dcStage.engine, started = e.anim.current;
@@ -420,13 +423,16 @@ async function stage(env) {
     return { quality: e.render.qualityName, outline: e.avatar.allOutlineMaterials().some((m) => m.visible), started, frame: document.body.dataset.frame, dist: d, statsText: document.querySelector('#stats').textContent };
   });
   check('interfaccia: preset Low senza contorni', uiLow.quality === 'low' && !uiLow.outline);
+  await page.click('#catbar [data-cat="face"]');
   await page.click('#faces [data-face="3d"]');
   await page.waitForFunction(() => window.__dcStage.engine.headMode === '3d' && window.__dcStage.def.head.mode === '3d', null, { timeout: 60000 });
   const face3d = await page.evaluate(async () => { const e = window.__dcStage.engine; return { visible: e.avatar.face.skin.visible, cut: e.hair.hiddenTriangles, saved: (await chrome.storage.local.get('dc_avatar')).dc_avatar.head.mode }; });
   await page.click('#faces [data-face="head_02"]');
   await page.waitForFunction(async () => { const e = window.__dcStage.engine; return e.photoHead.id === 'head_02' && e.photoHead.active && !!e.photoHead.identity() && ((await chrome.storage.local.get('dc_settings')).dc_settings || {}).headId === 'head_02'; }, null, { timeout: 60000 });
-  const face2 = await page.evaluate(async () => { const e = window.__dcStage.engine, st = await chrome.storage.local.get(['dc_avatar', 'dc_settings']); return { src: e.photoHead.identity().textureSrc, saved: st.dc_avatar.head, headId: st.dc_settings.headId, skin: e.avatar.skinTone }; });
+  await sleep(150);
+  const face2 = await page.evaluate(async () => { const e = window.__dcStage.engine, st = await chrome.storage.local.get(['dc_avatar', 'dc_settings']); return { src: (e.photoHead.identity() || {}).textureSrc || '', saved: st.dc_avatar.head, headId: st.dc_settings.headId, skin: e.avatar.skinTone }; });
   // guardaroba dall'interfaccia: un look preimpostato e un singolo capo, applicati e salvati
+  await page.click('#catbar [data-cat="wardrobe"]');
   await page.click('#looks [data-look="date_night"]');
   await page.waitForFunction(() => window.__dcStage.engine.def.outfit.dress && window.__dcStage.engine.def.outfit.dress.item === 'dress_bodycon', null, { timeout: 60000 });
   const look = await page.evaluate(async () => { const st = await chrome.storage.local.get('dc_avatar'); return { saved: st.dc_avatar.outfit.dress && st.dc_avatar.outfit.dress.item, worn: !!window.__dcStage.engine.wardrobe.worn.get('dress') }; });
@@ -436,6 +442,7 @@ async function stage(env) {
   await page.waitForFunction(() => window.__dcStage.engine.wardrobe.itemIn('shoes') === 'shoes_pumps', null, { timeout: 60000 });
   const equip = await page.evaluate(async () => { const st = await chrome.storage.local.get('dc_avatar'); return st.dc_avatar.outfit.shoes && st.dc_avatar.outfit.shoes.item; });
   check('interfaccia: cambio di un singolo capo (scarpe → décolleté) applicato e salvato', equip === 'shoes_pumps', equip);
+  await page.click('#catbar [data-cat="light"]');
   await page.click('#lights [data-light="neon"]');
   const neon = await page.evaluate(async () => { const e = window.__dcStage.engine, st = await chrome.storage.local.get('dc_settings'); return { id: e.lighting, rim: e.render.lights.rim.color.getHexString(), saved: st.dc_settings.light3d, bg: document.querySelector('.backdrop').style.background.length }; });
   check('interfaccia: preset di luce Neon Night applicato alla scena e salvato', neon.id === 'neon' && neon.rim === '7af7ff' && neon.saved === 'neon' && neon.bg > 20, '#' + neon.rim);
@@ -494,6 +501,7 @@ async function stage(env) {
   check('qualità High: contorni toon e ombre attivi nella pagina dell\'estensione', still.quality === 'high' && still.outline && still.tris > 60000, `${still.tris} triangoli con contorni e ombre`);
 
   // --- cambio modello dal menu: personaggio completo CC0 con la testa fotografica ---
+  await page.click('#catbar [data-cat="model"]');
   await page.click('#models [data-model="vivi"]');
   await page.waitForFunction(() => window.__dcStage && window.__dcStage.ready && window.__dcStage.engine && window.__dcStage.engine.model === 'vivi', null, { timeout: 150000 });
   const mdl = await page.evaluate(async () => {
@@ -537,7 +545,7 @@ async function stage(env) {
   const fall = await fb.evaluate(() => {
     const s = window.__dcStage;
     return { mode: s.mode, error: s.error, canvas: !!document.querySelector('#view canvas'),
-      dockHidden: document.querySelector('#dock').hidden, cardShown: !document.querySelector('#fallback').hidden, badge: document.querySelector('#badge').textContent };
+      dockHidden: getComputedStyle(document.querySelector('#panel')).display === 'none', cardShown: !document.querySelector('#fallback').hidden, badge: document.querySelector('#badge').textContent };
   });
   check('senza WebGL: nessun crash, avviso mostrato e niente canvas 3D', fall.mode === 'svg' && !fall.canvas && fall.cardShown && /WebGL/.test(fall.badge), fall.error || fall.badge);
   check('senza WebGL: comandi 3D nascosti', fall.dockHidden);
