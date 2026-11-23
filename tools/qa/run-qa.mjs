@@ -280,6 +280,7 @@ async function stage(env) {
   check('dati esistenti: chi arriva dalla v0.2 conserva la testa fotografica come modalità attiva', load.source === 'migrated' && load.headMode === 'photo' && load.engineHead === 'photo');
   check('volto: la texture della testa 3D è esattamente il file originale protetto (nessuna copia o rielaborazione)', !!load.ident && load.ident.textureSrc.endsWith('/assets/heads/' + load.photoId + '.png') && load.onHeadBone, load.ident && load.ident.textureSrc);
   check('volto: viso anime nascosto e capelli tagliati davanti alla foto', load.animeFaceHidden && load.hairCut > 100, `${load.hairCut} triangoli di capelli nascosti`);
+  check('animazioni: libreria .vrma scaricata caricata e retargettata (pose e gesti)', load.clips.length >= 8 && load.clips.includes('vrma_model') && load.clips.includes('vrma_peace'), `${load.clips.length} clip: ${load.clips.join(', ')}`);
 
   // --- rendering ---
   const pix = await page.evaluate(() => {

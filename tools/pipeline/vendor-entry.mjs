@@ -10,3 +10,4 @@ export { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 export { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 export { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 export * as VRM from '@pixiv/three-vrm';
+export * as VRMA from '@pixiv/three-vrm-animation';

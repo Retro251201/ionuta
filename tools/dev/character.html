@@ -33,6 +33,7 @@ const orbit = (az = 0, frame = 'full') => {
 window.dev = { THREE, engine, orbit, step: (n = 1) => engine.step(n) };
 orbit(Number(q.get('az') || 0), q.get('frame') || 'full');
 if (q.get('look')) { const [x, y] = q.get('look').split(',').map(Number); engine.look.lookAt(x, y); }
+if (q.get('clip')) { engine.anim.play(q.get('clip'), { fade: 0 }); engine.step(Math.round(Number(q.get('ct') || 3) * 30)); }
 engine.step(Math.round(Number(q.get('t') || 1) * 30));
 window.__ready = true;
 </script>

@@ -15,6 +15,6 @@ await build({
   banner: { js: `/* three.js ${ver('three')} (MIT) + @pixiv/three-vrm ${ver('@pixiv/three-vrm')} (MIT) – vedi vendor/LICENSES.txt */` },
   outfile: path.join(out, 'three.bundle.js')
 });
-const lic = ['three', '@pixiv/three-vrm'].map((p) => `===== ${p} ${ver(p)} =====\n` + fs.readFileSync(path.join(root, 'node_modules', p, 'LICENSE'), 'utf8')).join('\n\n');
+const lic = ['three', '@pixiv/three-vrm', '@pixiv/three-vrm-animation'].map((p) => `===== ${p} ${ver(p)} =====\n` + fs.readFileSync(path.join(root, 'node_modules', p, 'LICENSE'), 'utf8')).join('\n\n');
 fs.writeFileSync(path.join(out, 'LICENSES.txt'), lic);
 console.log('vendor ok', (fs.statSync(path.join(out, 'three.bundle.js')).size / 1024).toFixed(0) + ' KB');

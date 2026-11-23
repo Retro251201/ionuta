@@ -94,6 +94,13 @@ fuse, miniatura rimossa). Sono personaggi di esempio originali di VRoid, non per
 | `avatar/models/fumi.vrm` | Sakurada_Fumiriya | CC0-1.0 |
 | `avatar/models/sendagaya.vrm` | Sendagaya_Shibu | CC0-1.0 |
 
+### 2-quater. Animazioni (.vrma)
+
+Libreria di animazioni in formato **VRM Animation (.vrma)** caricate a runtime e retargettate sul modello scelto
+(`extension/assets/anim/VRMA_01…07.vrma`, indice `anim/index.json`). Sono clip di **sola motion** (nessun
+personaggio), del pacchetto di animazioni VRMA distribuito gratuitamente da pixiv per VRoid/VRM. Il caricatore è
+`@pixiv/three-vrm-animation` (MIT), incluso nel bundle vendor.
+
 ## 3. Contenuti generati dal progetto (nessun asset esterno)
 
 | Contenuto | Come nasce | Licenza |
