@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <title>Desktop Companion</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="login" class="hidden"></div>
+  <div id="app" class="hidden">
+    <header>
+      <div class="hd-left">
+        <div class="name" id="cName">Yume</div>
+        <div class="mood" id="mood"></div>
+      </div>
+      <div class="hd-right">
+        <div class="coins">🪙 <b id="coins">0</b></div>
+        <div class="lvl">Lv <b id="lvl">1</b></div>
+        <div class="xpbar" title="Esperienza"><i id="xpbar"></i></div>
+      </div>
+    </header>
+    <nav id="tabs">
+      <button data-tab="home" class="on" title="Stato">🏠</button>
+      <button data-tab="shop" title="Negozio">🛒</button>
+      <button data-tab="style" title="Stile">👗</button>
+      <button data-tab="focus" title="Pomodoro">🍅</button>
+      <button data-tab="goals" title="Obiettivi">🏆</button>
+      <button data-tab="game" title="Gioco">🎮</button>
+      <button data-tab="account" title="Accesso">👤</button>
+    </nav>
+
+    <section id="tab-home" class="tab on">
+      <div class="home-top">
+        <div class="preview" id="preview"></div>
+        <div class="stats" id="stats"></div>
+      </div>
+      <div class="quick">
+        <button class="btn" data-q="toggle" id="qToggle">👁️ Nascondi</button>
+        <button class="btn" data-q="sleep" id="qSleep">😴 Dormi</button>
+        <button class="btn" data-q="window">🪟 Finestra</button>
+        <button class="btn" data-q="summon">✨ Chiama</button>
+        <button class="btn wide" data-q="stage">🧊 Anteprima 3D</button>
+      </div>
+      <h3>Zaino <span class="muted">(clicca per dare da mangiare)</span></h3>
+      <div class="inv" id="inv"></div>
+      <h3>Chat veloce</h3>
+      <div class="chatlog" id="chatlog"></div>
+      <div class="chatrow"><input id="chatIn" placeholder="Scrivi qualcosa…" maxlength="500"><button class="btn primary" id="chatGo">➤</button></div>
+    </section>
+
+    <section id="tab-shop" class="tab">
+      <h3>Cibo e regali</h3>
+      <div class="grid" id="shop"></div>
+      <p class="muted">Guadagni monete stando attivo (1 ogni 5 min), con i pomodoro (+15), il gioco (+5) e gli obiettivi (+10).</p>
+    </section>
+
+    <section id="tab-style" class="tab">
+      <div class="style-wrap">
+        <div class="preview big" id="preview2"></div>
+        <div class="style-lists">
+          <h3>Testa (foto)</h3>
+          <div class="heads" id="heads"></div>
+          <button class="btn small" id="addHead">📸 Carica la tua foto…</button>
+          <h3>Capelli</h3>
+          <div class="chips" id="hairs"></div>
+          <div class="colors" id="hairColors"></div>
+          <h3>Accessorio</h3>
+          <div class="chips" id="accs"></div>
+          <h3>Outfit</h3>
+          <div class="outfits" id="outfits"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-focus" class="tab">
+      <div class="pomo">
+        <div class="pomo-phase" id="pomoPhase">Pronto</div>
+        <div class="pomo-time" id="pomoTime">25:00</div>
+        <div class="pomo-btns">
+          <button class="btn primary" id="pomoStart">▶ Inizia focus</button>
+          <button class="btn" id="pomoBreak">☕ Pausa</button>
+          <button class="btn" id="pomoStop">■ Stop</button>
+        </div>
+        <div class="muted" id="pomoInfo"></div>
+      </div>
+      <h3>Promemoria</h3>
+      <label class="row"><input type="checkbox" id="remOn"> Attivi</label>
+      <label class="row">💧 Acqua ogni <input type="number" id="remWater" min="0" max="240"> min</label>
+      <label class="row">🧍 Postura ogni <input type="number" id="remPosture" min="0" max="240"> min</label>
+    </section>
+
+    <section id="tab-goals" class="tab">
+      <div class="muted" id="goalsCount"></div>
+      <div class="ach" id="ach"></div>
+      <h3>Statistiche</h3>
+      <div class="counters" id="counters"></div>
+    </section>
+
+    <section id="tab-game" class="tab">
+      <h3>Morra cinese</h3>
+      <p class="muted">Vinci per +5 🪙. Anche se perdi lei sarà felice 😜</p>
+      <div class="rps">
+        <button class="rps-b" data-m="rock">✊</button>
+        <button class="rps-b" data-m="paper">✋</button>
+        <button class="rps-b" data-m="scissors">✌️</button>
+      </div>
+      <div class="rps-res" id="rpsRes"></div>
+      <div class="muted" id="rpsScore"></div>
+    </section>
+
+    <section id="tab-account" class="tab">
+      <div id="account"></div>
+    </section>
+
+    <footer>
+      <button class="link" id="openOptions">⚙️ Impostazioni</button>
+      <span class="muted" id="ver"></span>
+    </footer>
+  </div>
+
+  <script src="../shared/heads.generated.js"></script>
+  <script src="../shared/skins.js"></script>
+  <script src="../shared/data.js"></script>
+  <script src="../shared/auth-ui.js"></script>
+  <script src="../engine/body.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

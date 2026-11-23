@@ -1,0 +1,80 @@
+[
+ {
+  "id": "classic",
+  "name": "Classico",
+  "source": "HairSample_Female",
+  "license": "CC0-1.0",
+  "textures": {
+   "eyeline": "face/classic_eyeline.webp",
+   "eyelash": "face/classic_eyelash.webp",
+   "brow": "face/classic_brow.webp",
+   "iris": "face/classic_iris.webp",
+   "highlight": "face/classic_highlight.webp"
+  }
+ },
+ {
+  "id": "vita",
+  "name": "Cyber",
+  "source": "Vita",
+  "license": "CC0-1.0",
+  "textures": {
+   "eyeline": "face/vita_eyeline.webp",
+   "eyelash": "face/vita_eyelash.webp",
+   "brow": "face/vita_brow.webp",
+   "iris": "face/vita_iris.webp",
+   "highlight": "face/vita_highlight.webp"
+  }
+ },
+ {
+  "id": "vivi",
+  "name": "Dolce",
+  "source": "Vivi",
+  "license": "CC0-1.0",
+  "textures": {
+   "eyeline": "face/vivi_eyeline.webp",
+   "eyelash": "face/vivi_eyelash.webp",
+   "brow": "face/vivi_brow.webp",
+   "iris": "face/vivi_iris.webp",
+   "highlight": "face/vivi_highlight.webp"
+  }
+ },
+ {
+  "id": "victoria",
+  "name": "Brillante",
+  "source": "Victoria_Rubin",
+  "license": "CC0-1.0",
+  "textures": {
+   "eyeline": "face/victoria_eyeline.webp",
+   "eyelash": "face/victoria_eyelash.webp",
+   "brow": "face/victoria_brow.webp",
+   "iris": "face/victoria_iris.webp",
+   "highlight": "face/victoria_highlight.webp"
+  }
+ },
+ {
+  "id": "shino",
+  "name": "Intenso",
+  "source": "Sendagaya_Shino",
+  "license": "CC0-1.0",
+  "textures": {
+   "eyeline": "face/shino_eyeline.webp",
+   "eyelash": "face/shino_eyelash.webp",
+   "brow": "face/shino_brow.webp",
+   "iris": "face/shino_iris.webp",
+   "highlight": "face/shino_highlight.webp"
+  }
+ },
+ {
+  "id": "shibu",
+  "name": "Notturno",
+  "source": "Darkness_Shibu",
+  "license": "CC0-1.0",
+  "textures": {
+   "eyeline": "face/shibu_eyeline.webp",
+   "eyelash": "face/shibu_eyelash.webp",
+   "brow": "face/shibu_brow.webp",
+   "iris": "face/shibu_iris.webp",
+   "highlight": "face/shibu_highlight.webp"
+  }
+ }
+]

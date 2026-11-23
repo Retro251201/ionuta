@@ -1,0 +1,35 @@
+<!doctype html><meta charset="utf-8"><title>dev view</title>
+<style>html,body{margin:0;background:#2a2c3a;overflow:hidden}canvas{display:block}</style>
+<canvas id="c"></canvas>
+<script type="module">
+// Visualizzatore di sviluppo: ?model=percorso&hide=regexMateriali&show=regex&views=front,side,back&frame=full|head|upper&bg=hex
+import { THREE, GLTFLoader, VRM } from '/extension/vendor/three.bundle.js';
+const q = new URLSearchParams(location.search);
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(innerWidth, innerHeight); renderer.outputColorSpace = THREE.SRGBColorSpace;
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#' + (q.get('bg') || '3a3d52'));
+scene.add(new THREE.AmbientLight(0xffffff, 0.9)); const dl = new THREE.DirectionalLight(0xffffff, 2.2); dl.position.set(1, 2, 3); scene.add(dl);
+const loader = new GLTFLoader(); loader.register((p) => new VRM.VRMLoaderPlugin(p));
+const gltf = await loader.loadAsync(q.get('model'));
+const vrm = gltf.userData.vrm; const root = vrm ? vrm.scene : gltf.scene;
+if (vrm) { VRM.VRMUtils.rotateVRM0(vrm); }
+scene.add(root);
+const hide = q.get('hide') ? new RegExp(q.get('hide')) : null, show = q.get('show') ? new RegExp(q.get('show')) : null;
+const names = [];
+root.traverse((o) => { if (!o.isMesh) return; const ms = Array.isArray(o.material) ? o.material : [o.material]; const n = o.name + ' / ' + ms.map((m) => m.name).join('+'); names.push(n); if ((hide && hide.test(n)) || (show && !show.test(n))) o.visible = false; });
+window.__names = names; window.__vrm = vrm; window.__root = root; window.THREE = THREE;
+if (vrm) vrm.update(0.016);
+const frame = q.get('frame') || 'full';
+const F = { full: [0.85, 1.05], upper: [1.25, 0.55], head: [1.45, 0.28], legs: [0.5, 0.6] }[frame];
+const views = (q.get('views') || 'front,side,back').split(',');
+const DIR = { front: [0, 0, 1], back: [0, 0, -1], side: [1, 0, 0], left: [-1, 0, 0], q3: [0.7, 0.15, 0.7], top: [0, 1, 0.01] };
+const W = innerWidth / views.length;
+renderer.setScissorTest(true);
+views.forEach((v, i) => {
+  const cam = new THREE.PerspectiveCamera(22, W / innerHeight, 0.05, 50); const d = DIR[v]; const dist = F[1] / Math.tan(11 * Math.PI / 180) * 1.05;
+  cam.position.set(d[0] * dist, F[0] + d[1] * dist, d[2] * dist); cam.lookAt(0, F[0], 0);
+  renderer.setViewport(i * W, 0, W, innerHeight); renderer.setScissor(i * W, 0, W, innerHeight); renderer.render(scene, cam);
+});
+window.__ready = true;
+</script>

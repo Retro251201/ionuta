@@ -1,0 +1,51 @@
+@import url("../shared/ui.css");
+body { min-height: 100vh; }
+.layout { display: flex; min-height: 100vh; }
+aside { width: 240px; flex: none; background: #fff; border-right: 1px solid var(--line); padding: 18px 12px; position: sticky; top: 0; height: 100vh; }
+.brand { display: flex; gap: 10px; align-items: center; margin-bottom: 18px; }
+.brand img { width: 40px; height: 40px; }
+.brand b { display: block; }
+#nav a { display: block; padding: 8px 10px; border-radius: 9px; color: var(--ink); text-decoration: none; margin-bottom: 2px; }
+#nav a:hover, #nav a.on { background: #fff0f6; color: var(--pink); }
+main { flex: 1; padding: 22px 34px 80px; max-width: 860px; }
+section { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 16px 20px; margin-bottom: 18px; scroll-margin-top: 16px; }
+h2 { margin: 0 0 10px; font-size: 18px; }
+.f { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 8px 0; border-bottom: 1px dashed #f3e6ee; }
+.f:last-of-type { border-bottom: 0; }
+.f > span { flex: 1; }
+.f input[type=range] { width: 240px; }
+.f input[type=text], .f input[type=number], .f select { width: 240px; }
+.f.col { flex-direction: column; align-items: stretch; }
+.f.col input, textarea { width: 100%; }
+output { color: var(--pink); font-weight: 700; margin-left: 6px; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 8px 0; }
+.welcome { display: flex; gap: 18px; }
+.wl-prev { width: 170px; height: 270px; flex: none; background: radial-gradient(circle at 50% 80%, #ffe3ee, transparent 70%); border-radius: 14px; }
+.wl-prev svg { width: 100%; height: 100%; }
+kbd { background: #f6f0f4; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; padding: 0 5px; font-size: 11px; }
+code { background: #f6f0f4; padding: 1px 5px; border-radius: 5px; }
+.saved { position: fixed; right: 22px; bottom: 22px; background: var(--mint); color: #fff; padding: 8px 14px; border-radius: 20px; opacity: 0; transition: opacity .2s; pointer-events: none; }
+.saved.show { opacity: 1; }
+#gate { position: fixed; inset: 0; background: linear-gradient(135deg, #ffd1e1, #d0bfff); display: flex; align-items: center; justify-content: center; z-index: 10; }
+.gate-card { background: #fff; border-radius: 18px; width: 360px; box-shadow: 0 20px 50px #0002; }
+.hidden { display: none !important; }
+.myheads { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; margin: 10px 0; }
+.myheads > p { grid-column: 1 / -1; margin: 0; }
+.myheads .mh { border: 2px solid var(--line); border-radius: 12px; padding: 6px; text-align: center; background: #fff; }
+.myheads .mh.on { border-color: var(--pink); background: #fff0f6; }
+.myheads img { width: 100%; height: 96px; object-fit: contain; background: repeating-conic-gradient(#f3eef2 0 25%, #fff 0 50%) 0 0 / 14px 14px; border-radius: 8px; }
+.myheads .nm { font-size: 12px; margin: 4px 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.myheads .row { justify-content: center; margin: 0; gap: 4px; }
+.myheads .btn { padding: 3px 7px; font-size: 11px; }
+.he { border: 1px dashed var(--line); border-radius: 14px; padding: 12px; }
+.he-steps { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.he-body { display: flex; gap: 14px; margin-top: 10px; flex-wrap: wrap; }
+.he-canvas canvas { width: 360px; height: 360px; border-radius: 12px; background: repeating-conic-gradient(#f3eef2 0 25%, #fff 0 50%) 0 0 / 18px 18px; cursor: crosshair; touch-action: none; display: block; }
+.he-ctl { flex: 1; min-width: 280px; }
+.he-ctl .f input[type=range] { width: 170px; }
+.he-ctl .f input[type=text] { width: 170px; }
+.he .tools .btn.on { background: var(--pink); color: #fff; border-color: var(--pink); }
+.he-prev { width: 150px; height: 250px; background: radial-gradient(circle at 50% 80%, #ffe3ee, transparent 70%); border-radius: 12px; }
+.he-prev svg { width: 100%; height: 100%; }
+#accBox .acc { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+#accBox .auth { padding: 8px 0; max-width: 340px; }

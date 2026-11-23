@@ -1,0 +1,137 @@
+[
+ {
+  "id": "twintail",
+  "name": "Codini alti",
+  "file": "hair/twintail.vrm",
+  "source": "HairSample_Female",
+  "license": "CC0-1.0",
+  "fit": {
+   "w": 0.1847,
+   "top": 0.199,
+   "chin": -0.0332,
+   "front": 0.1146,
+   "headY": 1.4219
+  },
+  "tris": 12384
+ },
+ {
+  "id": "pixie",
+  "name": "Pixie con chignon",
+  "file": "hair/pixie.vrm",
+  "source": "Vita",
+  "license": "CC0-1.0",
+  "fit": {
+   "w": 0.1859,
+   "top": 0.2003,
+   "chin": -0.0334,
+   "front": 0.1158,
+   "headY": 1.4663
+  },
+  "tris": 12366
+ },
+ {
+  "id": "mushroom",
+  "name": "Caschetto tondo",
+  "file": "hair/mushroom.vrm",
+  "source": "Vivi",
+  "license": "CC0-1.0",
+  "fit": {
+   "w": 0.1674,
+   "top": 0.1848,
+   "chin": -0.0272,
+   "front": 0.105,
+   "headY": 1.1909
+  },
+  "tris": 12070
+ },
+ {
+  "id": "bun",
+  "name": "Corto con chignon",
+  "file": "hair/bun.vrm",
+  "source": "Victoria_Rubin",
+  "license": "CC0-1.0",
+  "fit": {
+   "w": 0.1868,
+   "top": 0.2063,
+   "chin": -0.0314,
+   "front": 0.1166,
+   "headY": 1.4969
+  },
+  "tris": 15164
+ },
+ {
+  "id": "long",
+  "name": "Lunghi lisci",
+  "file": "hair/long.vrm",
+  "source": "Sendagaya_Shino",
+  "license": "CC0-1.0",
+  "fit": {
+   "w": 0.1855,
+   "top": 0.1999,
+   "chin": -0.0333,
+   "front": 0.1151,
+   "headY": 1.4165
+  },
+  "tris": 16810
+ },
+ {
+  "id": "layered",
+  "name": "Scalati medi",
+  "file": "hair/layered.vrm",
+  "source": "Darkness_Shibu",
+  "license": "CC0-1.0",
+  "fit": {
+   "w": 0.1847,
+   "top": 0.199,
+   "chin": -0.0332,
+   "front": 0.1146,
+   "headY": 1.4219
+  },
+  "tris": 19994
+ },
+ {
+  "id": "short",
+  "name": "Corto mosso",
+  "file": "hair/short.vrm",
+  "source": "Sakurada_Fumiriya",
+  "license": "CC0-1.0",
+  "fit": {
+   "w": 0.1743,
+   "top": 0.1879,
+   "chin": -0.0474,
+   "front": 0.1169,
+   "headY": 1.6842
+  },
+  "tris": 24788
+ },
+ {
+  "id": "boyish",
+  "name": "Corto sbarazzino",
+  "file": "hair/boyish.vrm",
+  "source": "Sendagaya_Shibu",
+  "license": "CC0-1.0",
+  "fit": {
+   "w": 0.1847,
+   "top": 0.199,
+   "chin": -0.0332,
+   "front": 0.1146,
+   "headY": 1.3876
+  },
+  "tris": 19994
+ },
+ {
+  "id": "wolf",
+  "name": "Wolf cut",
+  "file": "hair/wolf.vrm",
+  "source": "HairSample_Male",
+  "license": "CC0-1.0",
+  "fit": {
+   "w": 0.181,
+   "top": 0.1951,
+   "chin": -0.0492,
+   "front": 0.1214,
+   "headY": 1.5454
+  },
+  "tris": 9196
+ }
+]

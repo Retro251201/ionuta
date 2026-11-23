@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <title>Impostazioni – Desktop Companion</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div id="gate" class="hidden"><div class="gate-card" id="gateBox"></div></div>
+  <div class="layout" id="main">
+    <aside>
+      <div class="brand"><img src="../../assets/icons/icon48.png" alt=""><div><b>Desktop Companion</b><span class="muted" id="ver"></span></div></div>
+      <nav id="nav">
+        <a href="#benvenuto">👋 Benvenuto</a>
+        <a href="#generale">⚙️ Generale</a>
+        <a href="#aspetto">👗 Aspetto</a>
+        <a href="#teste">📸 Le tue teste</a>
+        <a href="#comportamento">🧍 Comportamento</a>
+        <a href="#voce">🔊 Voce e suoni</a>
+        <a href="#promemoria">💧 Promemoria</a>
+        <a href="#pomodoro">🍅 Pomodoro</a>
+        <a href="#ia">🧠 Intelligenza artificiale</a>
+        <a href="#siti">🚫 Siti disattivati</a>
+        <a href="#accesso">🔐 Accesso</a>
+        <a href="#dati">💾 Dati</a>
+      </nav>
+    </aside>
+    <main>
+      <section id="benvenuto">
+        <h2>👋 Benvenuto!</h2>
+        <div class="welcome">
+          <div class="wl-prev" id="preview"></div>
+          <div>
+            <p>La tua companion ora vive in ogni pagina web (in basso). Ecco cosa puoi fare:</p>
+            <ul>
+              <li><b>Trascinala</b> e <b>lanciala</b>: rimbalza sui bordi 🌀</li>
+              <li><b>Accarezzala</b> muovendo il mouse avanti e indietro sulla testa 🤚</li>
+              <li><b>Clic</b> = colpetto · <b>doppio clic</b> = chat · <b>tasto destro</b> = menu (cibo, balla, dormi, pomodoro…)</li>
+              <li>Seleziona un testo → tasto destro → <b>“Fai leggere”</b> o <b>“Chiedi”</b></li>
+              <li>Scorciatoie: <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd> mostra/nascondi · <kbd>S</kbd> chiama · <kbd>W</kbd> finestra desktop</li>
+              <li>Il popup (icona dell'estensione) contiene negozio, outfit, pomodoro, obiettivi e minigioco</li>
+            </ul>
+            <p class="muted">Nota: le pagine già aperte prima dell'installazione vanno ricaricate. Le pagine interne di Chrome (chrome://, Web Store) non permettono estensioni: usa la <b>finestra desktop</b>.</p>
+            <div class="row"><button class="btn primary" id="wlProfile">👤 Crea profilo</button><button class="btn" id="wlWindow">🪟 Apri finestra desktop</button></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="generale">
+        <h2>⚙️ Generale</h2>
+        <label class="f"><span>Companion attiva</span><input type="checkbox" data-path="enabled"></label>
+        <label class="f"><span>Nome della companion</span><input type="text" data-path="name" maxlength="20"></label>
+        <label class="f"><span>Dimensione <output data-for="size"></output></span><input type="range" data-path="size" data-type="num" min="140" max="440" step="10"></label>
+        <label class="f"><span>Velocità <output data-for="speed"></output></span><input type="range" data-path="speed" data-type="num" min="0.4" max="2" step="0.1"></label>
+        <label class="f"><span>Opacità <output data-for="opacity"></output></span><input type="range" data-path="opacity" data-type="num" min="0.3" max="1" step="0.05"></label>
+        <label class="f"><span>Notifiche di sistema</span><input type="checkbox" data-path="notifications"></label>
+      </section>
+
+      <section id="aspetto">
+        <h2>👗 Aspetto</h2>
+        <p class="muted">Il corpo è disegnato in stile anime; la testa resta sempre la foto scelta. I capelli vengono disegnati <b>dietro</b> la foto per incorniciarla.</p>
+        <label class="f"><span>Testa (foto)</span><select data-path="headId" id="selHead"></select></label>
+        <label class="f"><span>Capelli</span><select data-path="hairStyle" id="selHair"></select></label>
+        <label class="f"><span>Colore capelli</span><select data-path="hairColor" id="selHairColor"></select></label>
+        <label class="f"><span>Accessorio</span><select data-path="accessory" id="selAcc"></select></label>
+        <p class="muted">Gli outfit si comprano e si indossano dal popup (scheda 👗).</p>
+        <p class="muted"><b>Novità:</b> il personaggio 3D è in anteprima in una finestra dedicata (animazioni, acconciature, qualità grafica). Se il 3D non è disponibile sul tuo dispositivo compare il personaggio classico.</p>
+        <div class="row"><button class="btn" id="openStage">🧊 Apri l'anteprima 3D</button></div>
+      </section>
+
+      <section id="teste">
+        <h2>📸 Le tue teste</h2>
+        <p class="muted">Carica una tua foto: puoi solo <b>ritagliarla, scontornarla e posizionarla</b>. Nessun filtro o effetto cartoon: la foto resta com'è. Le foto restano solo in questo browser (max <span id="maxHeads"></span>).</p>
+        <div id="myHeads" class="myheads"></div>
+        <div id="he" class="he">
+          <div class="he-steps"><b id="heStep">1 · Scegli una foto</b>
+            <label class="btn primary">🖼️ Scegli foto…<input type="file" id="heFile" accept="image/png,image/jpeg,image/webp" hidden></label>
+          </div>
+          <div class="he-body hidden" id="heBody">
+            <div class="he-canvas"><canvas id="heCv" width="360" height="360"></canvas><div class="muted" id="heHint"></div></div>
+            <div class="he-ctl">
+              <div id="heFrame">
+                <label class="f"><span>Zoom</span><input type="range" id="heZoom" min="0.2" max="4" step="0.01" value="1"></label>
+                <label class="f"><span>Rotazione</span><input type="range" id="heRot" min="-30" max="30" step="0.5" value="0"></label>
+                <p class="muted">Trascina la foto per centrarla: testa e collo devono stare nel riquadro.</p>
+                <button class="btn primary" id="heNext">Avanti: scontorna →</button>
+              </div>
+              <div id="heCut" class="hidden">
+                <div class="row tools" id="heTools">
+                  <button class="btn" data-tool="magic" title="Clic sullo sfondo per cancellare zone di colore simile">🪄 Gomma magica</button>
+                  <button class="btn" data-tool="erase">🧽 Gomma</button>
+                  <button class="btn" data-tool="restore">🖌️ Ripristina</button>
+                  <button class="btn" data-tool="anchor" title="Clic sul punto sotto il mento / base del collo">📍 Ancora</button>
+                  <button class="btn" data-tool="skin" title="Clic sulla pelle per prendere il colore">💧 Colore pelle</button>
+                </div>
+                <label class="f"><span>Tolleranza gomma magica <output id="oTol"></output></span><input type="range" id="heTol" min="4" max="90" value="28"></label>
+                <label class="f"><span>Pennello <output id="oBrush"></output></span><input type="range" id="heBrush" min="4" max="80" value="22"></label>
+                <label class="f"><span>Ovale sfumato</span><input type="checkbox" id="heOval"></label>
+                <label class="f"><span>Ovale: larghezza / altezza</span><span><input type="range" id="heOvW" min="0.2" max="1" step="0.01" value="0.62" style="width:110px"> <input type="range" id="heOvH" min="0.2" max="1" step="0.01" value="0.86" style="width:110px"></span></label>
+                <label class="f"><span>Sfumatura bordo <output id="oFeather"></output></span><input type="range" id="heFeather" min="0" max="40" value="6"></label>
+                <label class="f"><span>Larghezza viso (guide rosa) <output id="oFaceW"></output></span><input type="range" id="heFaceW" min="0.15" max="1" step="0.01" value="0.5"></label>
+                <label class="f"><span>Colore pelle (collo)</span><input type="color" id="heSkin" value="#e8c4a8"></label>
+                <label class="f"><span>Nome</span><input type="text" id="heName" maxlength="40" value="La mia foto"></label>
+                <div class="row">
+                  <button class="btn" id="heUndo">↶ Annulla</button>
+                  <button class="btn" id="heBack">← Inquadratura</button>
+                  <button class="btn primary" id="heSave">💾 Salva e indossa</button>
+                  <button class="btn" id="heCancel">Annulla tutto</button>
+                </div>
+              </div>
+            </div>
+            <div class="he-prev" id="hePrev" title="Anteprima"></div>
+          </div>
+        </div>
+        <p class="muted">Consiglio: foto frontale, buona luce, sfondo uniforme. Metti l'ancora 📍 alla base del collo e regola le guide rosa sui bordi del viso. Su alcuni siti con regole di sicurezza molto severe (CSP) le foto caricate possono essere bloccate: in quel caso compare la testa predefinita; nella finestra desktop funzionano sempre.</p>
+      </section>
+
+      <section id="comportamento">
+        <h2>🧍 Comportamento</h2>
+        <label class="f"><span>Cammina da sola</span><input type="checkbox" data-path="walk"></label>
+        <label class="f"><span>Ogni tanto segue il cursore</span><input type="checkbox" data-path="followCursor"></label>
+        <label class="f"><span>Fisica (gravità, lanci, rimbalzi)</span><input type="checkbox" data-path="physics"></label>
+        <label class="f"><span>Commenta i siti che visiti</span><input type="checkbox" data-path="siteComments"></label>
+        <label class="f"><span>Nascondi a schermo intero (video)</span><input type="checkbox" data-path="hideOnFullscreen"></label>
+        <label class="f"><span>Quanto parla</span>
+          <select data-path="talkFrequency"><option value="off">Mai</option><option value="rare">Poco</option><option value="normal">Normale</option><option value="often">Chiacchierona</option></select></label>
+      </section>
+
+      <section id="voce">
+        <h2>🔊 Voce e suoni</h2>
+        <label class="f"><span>Voce sintetica (legge i fumetti)</span><input type="checkbox" data-path="voice"></label>
+        <label class="f"><span>Velocità voce <output data-for="voiceRate"></output></span><input type="range" data-path="voiceRate" data-type="num" min="0.6" max="1.6" step="0.05"></label>
+        <label class="f"><span>Tono voce <output data-for="voicePitch"></output></span><input type="range" data-path="voicePitch" data-type="num" min="0.5" max="2" step="0.05"></label>
+        <label class="f"><span>Effetti sonori</span><input type="checkbox" data-path="sounds"></label>
+        <button class="btn" id="voiceTest">▶ Prova voce</button>
+      </section>
+
+      <section id="promemoria">
+        <h2>💧 Promemoria</h2>
+        <label class="f"><span>Promemoria attivi</span><input type="checkbox" data-path="reminders.enabled"></label>
+        <label class="f"><span>Bere acqua ogni (min, 0 = mai)</span><input type="number" data-path="reminders.water" data-type="num" min="0" max="240"></label>
+        <label class="f"><span>Postura / pausa occhi ogni (min)</span><input type="number" data-path="reminders.posture" data-type="num" min="0" max="240"></label>
+      </section>
+
+      <section id="pomodoro">
+        <h2>🍅 Pomodoro</h2>
+        <label class="f"><span>Focus (min)</span><input type="number" data-path="pomodoro.work" data-type="num" min="1" max="180"></label>
+        <label class="f"><span>Pausa breve (min)</span><input type="number" data-path="pomodoro.short" data-type="num" min="1" max="60"></label>
+        <label class="f"><span>Pausa lunga (min)</span><input type="number" data-path="pomodoro.long" data-type="num" min="1" max="90"></label>
+        <label class="f"><span>Pausa lunga ogni N cicli</span><input type="number" data-path="pomodoro.cycles" data-type="num" min="1" max="12"></label>
+        <label class="f"><span>Avvia la pausa automaticamente</span><input type="checkbox" data-path="pomodoro.autoBreak"></label>
+      </section>
+
+      <section id="ia">
+        <h2>🧠 Intelligenza artificiale (opzionale)</h2>
+        <p class="muted">Senza IA la companion usa un “cervello” offline a regole. Con l'IA usa qualsiasi API compatibile OpenAI (OpenAI, OpenRouter, Groq, LM Studio, Ollama locale…). La chiave resta solo in questo browser.</p>
+        <div class="row presets">
+          <button class="btn" data-preset="openai">OpenAI</button>
+          <button class="btn" data-preset="openrouter">OpenRouter</button>
+          <button class="btn" data-preset="groq">Groq</button>
+          <button class="btn" data-preset="ollama">Ollama (locale)</button>
+          <button class="btn" data-preset="lmstudio">LM Studio</button>
+        </div>
+        <label class="f"><span>Usa IA</span><input type="checkbox" data-path="ai.enabled"></label>
+        <label class="f col"><span>Endpoint (chat/completions)</span><input type="url" data-path="ai.endpoint" spellcheck="false"></label>
+        <label class="f col"><span>Modello</span><input type="text" data-path="ai.model" spellcheck="false"></label>
+        <label class="f col"><span>Chiave API</span><input type="password" data-path="ai.apiKey" spellcheck="false" autocomplete="off"></label>
+        <label class="f col"><span>Personalità (prompt di sistema – {name} e {user} vengono sostituiti)</span><textarea data-path="ai.persona" rows="5"></textarea></label>
+        <div class="row"><button class="btn primary" id="aiAuth">🔓 Autorizza endpoint e prova</button><span id="aiRes" class="muted"></span></div>
+      </section>
+
+      <section id="siti">
+        <h2>🚫 Siti disattivati</h2>
+        <p class="muted">Un dominio per riga (es. <code>youtube.com</code>). La companion non apparirà su questi siti e relativi sottodomini.</p>
+        <textarea data-path="disabledSites" data-type="lines" rows="6" spellcheck="false"></textarea>
+      </section>
+
+      <section id="accesso">
+        <h2>🔐 Accesso</h2>
+        <p class="muted">Profilo locale protetto da password (PBKDF2-SHA256, 150.000 iterazioni). Con “Richiedi password” la companion resta nascosta finché non accedi (la sessione dura fino alla chiusura del browser).</p>
+        <label class="f"><span>Richiedi password</span><input type="checkbox" data-path="requireLogin"></label>
+        <div id="accBox"></div>
+      </section>
+
+      <section id="dati">
+        <h2>💾 Dati</h2>
+        <div class="row">
+          <button class="btn" id="exp">⬇️ Esporta backup</button>
+          <label class="btn">⬆️ Importa backup<input type="file" id="imp" accept="application/json" hidden></label>
+          <button class="btn" id="clearChat">🧹 Cancella chat</button>
+          <button class="btn danger" id="resetState">♻️ Azzera progressi</button>
+          <button class="btn danger" id="resetSettings">↺ Impostazioni predefinite</button>
+        </div>
+        <p class="muted">Il backup contiene progressi, impostazioni (inclusa la chiave API!), profilo e chat.</p>
+      </section>
+      <div class="saved" id="saved">Salvato ✓</div>
+    </main>
+  </div>
+
+  <script src="../shared/heads.generated.js"></script>
+  <script src="../shared/skins.js"></script>
+  <script src="../shared/data.js"></script>
+  <script src="../shared/auth-ui.js"></script>
+  <script src="../engine/body.js"></script>
+  <script src="head-editor.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+{
+  "manifest_version": 3,
+  "name": "Desktop Companion – Anime Girl",
+  "short_name": "DC Companion",
+  "version": "0.3.0",
+  "description": "Un companion anime che vive nel browser: cammina, parla, si fa coccolare, ti aiuta col pomodoro e ti ricorda di bere. Testa dalle tue foto.",
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "32": "assets/icons/icon32.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  },
+  "action": {
+    "default_popup": "src/popup/popup.html",
+    "default_title": "Desktop Companion",
+    "default_icon": {
+      "16": "assets/icons/icon16.png",
+      "32": "assets/icons/icon32.png",
+      "48": "assets/icons/icon48.png"
+    }
+  },
+  "options_page": "src/options/options.html",
+  "background": {
+    "service_worker": "src/background/sw.js"
+  },
+  "permissions": [
+    "storage",
+    "alarms",
+    "notifications",
+    "contextMenus",
+    "idle",
+    "unlimitedStorage"
+  ],
+  "optional_host_permissions": [
+    "https://*/*",
+    "http://localhost/*",
+    "http://127.0.0.1/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "src/shared/heads.generated.js",
+        "src/shared/skins.js",
+        "src/shared/data.js",
+        "src/engine/body.js",
+        "src/engine/companion.js",
+        "src/content/content.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "assets/heads/*",
+        "assets/icons/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "commands": {
+    "toggle-companion": {
+      "suggested_key": {
+        "default": "Alt+Shift+C"
+      },
+      "description": "Mostra / nascondi il companion"
+    },
+    "summon": {
+      "suggested_key": {
+        "default": "Alt+Shift+S"
+      },
+      "description": "Chiama il companion vicino al cursore"
+    },
+    "open-window": {
+      "suggested_key": {
+        "default": "Alt+Shift+W"
+      },
+      "description": "Apri la finestra desktop del companion"
+    }
+  }
+}

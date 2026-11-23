@@ -1,0 +1,32 @@
+<!doctype html><meta charset="utf-8"><title>dev engine</title>
+<style>html,body{margin:0;height:100%;background:#2b2e40;overflow:hidden}#stage{position:absolute;inset:0}</style>
+<div id="stage"></div>
+<script type="module">
+// Banco di prova del motore: espone window.dev per gli script di sviluppo/QA (tools/dev/shot.mjs --eval).
+// Parametri: ?q=low|medium|high|ultra&bg=hex|none&cam=full|upper|face|legs|back|side|q3
+import { THREE } from '/extension/src/engine3d/lib.js';
+import { RenderingEngine } from '/extension/src/engine3d/render/rendering-engine.js';
+import { AssetManager } from '/extension/src/engine3d/assets/asset-manager.js';
+import { loadAvatar } from '/extension/src/engine3d/avatar/avatar-loader.js';
+const q = new URLSearchParams(location.search);
+const re = new RenderingEngine(document.getElementById('stage'), { quality: q.get('q') || 'high', autoPause: false });
+const bg = q.get('bg') || '3a3d52';
+if (bg !== 'none') re.setBackground(new THREE.Color('#' + bg));
+const assets = new AssetManager();
+const avatar = await loadAvatar(assets);
+re.scene.add(avatar.root);
+const CAMS = { full: [0, 0.86, 4.6, 0, 0.84, 0], upper: [0, 1.25, 2.2, 0, 1.22, 0], face: [0, 1.5, 1.0, 0, 1.49, 0], legs: [0, 0.5, 2.6, 0, 0.48, 0], back: [0, 0.86, -4.6, 0, 0.84, 0], side: [4.6, 0.86, 0, 0, 0.84, 0], q3: [2.6, 1.1, 3.6, 0, 0.84, 0], q3b: [-2.6, 1.1, -3.6, 0, 0.84, 0] };
+const setCam = (name) => { const c = CAMS[name] || CAMS.full; re.camera.position.set(c[0], c[1], c[2]); re.camera.lookAt(c[3], c[4], c[5]); };
+setCam(q.get('cam') || 'full');
+window.dev = { THREE, re, assets, avatar, setCam, CAMS, step: (n = 1, dt = 1 / 30) => { for (let i = 0; i < n; i++) { avatar.update(dt); re.step(dt); } } };
+// Griglia di più inquadrature in un'unica immagine (per le revisioni visive): dev.sheet(['full','back','face'])
+window.dev.sheet = (names) => {
+  const r = re.renderer, w = innerWidth, h = innerHeight, cw = w / names.length;
+  r.setScissorTest(true);
+  names.forEach((nm, i) => { setCam(nm); re.camera.aspect = cw / h; re.camera.updateProjectionMatrix(); r.setViewport(i * cw, 0, cw, h); r.setScissor(i * cw, 0, cw, h); r.render(re.scene, re.camera); });
+  r.setScissorTest(false); r.setViewport(0, 0, w, h);
+};
+for (const m of (q.get('modules') || '').split(',').filter(Boolean)) { const mod = await import(m); if (mod.devSetup) await mod.devSetup(window.dev, q); }
+window.dev.step(2);
+window.__ready = true;
+</script>

@@ -1,0 +1,11 @@
+{
+ "source": "HairSample_Female",
+ "license": "CC0-1.0",
+ "fit": {
+  "w": 0.1847,
+  "top": 0.199,
+  "chin": -0.0332,
+  "front": 0.1146,
+  "headY": 1.4219
+ }
+}

@@ -1,0 +1,9 @@
+node_modules/
+.hoplite/
+/dist/
+/.cache/
+*.log
+/tools/qa/out/
+
+.env
+.env.*

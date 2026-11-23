@@ -1,0 +1,83 @@
+@import url("../shared/ui.css");
+body { width: 380px; min-height: 480px; }
+#login { padding: 10px; }
+header { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px 10px; background: linear-gradient(135deg, #ff8fb3, #b197fc); color: #fff; }
+header .name { font-size: 18px; font-weight: 800; letter-spacing: .3px; }
+header .mood { font-size: 12px; opacity: .95; }
+.hd-right { text-align: right; min-width: 120px; }
+.coins { font-size: 14px; }
+.lvl { font-size: 12px; margin-top: 2px; }
+.xpbar { height: 6px; background: #ffffff55; border-radius: 6px; overflow: hidden; margin-top: 3px; }
+.xpbar i { display: block; height: 100%; background: #fff; width: 0; transition: width .4s; }
+nav { display: flex; background: #fff; border-bottom: 1px solid var(--line); }
+nav button { flex: 1; border: 0; background: none; padding: 8px 0; font-size: 17px; cursor: pointer; border-bottom: 2px solid transparent; filter: grayscale(.6); }
+nav button.on { border-bottom-color: var(--pink); filter: none; }
+.tab { display: none; padding: 10px 14px 12px; max-height: 470px; overflow: auto; }
+.tab.on { display: block; }
+.home-top { display: flex; gap: 10px; align-items: center; }
+.preview { width: 110px; height: 170px; flex: none; background: radial-gradient(circle at 50% 80%, #ffe3ee, transparent 70%); border-radius: var(--r); }
+.preview.big { width: 150px; height: 240px; }
+.preview svg { width: 100%; height: 100%; display: block; }
+.stats { flex: 1; display: flex; flex-direction: column; gap: 7px; }
+.stat .lab { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 2px; }
+.quick { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; }
+.quick .wide { grid-column: 1 / -1; }
+.inv { display: flex; flex-wrap: wrap; gap: 6px; }
+.inv .it { border: 1px solid var(--line); background: #fff; border-radius: 10px; padding: 4px 8px; cursor: pointer; font-size: 14px; }
+.inv .it:hover { background: #fff0f6; }
+.inv .it b { font-size: 11px; color: var(--muted); margin-left: 2px; }
+.chatlog { max-height: 120px; overflow: auto; background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 6px 8px; display: flex; flex-direction: column; gap: 4px; }
+.chatlog .m { padding: 4px 8px; border-radius: 10px; max-width: 85%; white-space: pre-wrap; word-break: break-word; }
+.chatlog .m.user { align-self: flex-end; background: var(--pink); color: #fff; }
+.chatlog .m.assistant { align-self: flex-start; background: #f3eefc; }
+.chatrow { display: flex; gap: 6px; margin-top: 6px; }
+.chatrow input { flex: 1; }
+.grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.card { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 8px; display: flex; flex-direction: column; gap: 4px; }
+.card .ic { font-size: 26px; }
+.card .nm { font-weight: 700; }
+.card .eff { font-size: 11px; color: var(--muted); }
+.card .row2 { display: flex; justify-content: space-between; align-items: center; }
+.style-wrap { display: flex; gap: 10px; }
+.style-lists { flex: 1; }
+.heads { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.heads button { border: 2px solid var(--line); border-radius: 10px; background: #fff; padding: 2px; cursor: pointer; height: 64px; }
+.heads button.on { border-color: var(--pink); }
+.heads img { width: 100%; height: 100%; object-fit: contain; }
+.heads button.custom { border-style: dashed; }
+#addHead { margin: 6px 0 2px; width: 100%; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.chips button { border: 2px solid var(--line); border-radius: 14px; background: #fff; padding: 3px 8px; cursor: pointer; font: inherit; font-size: 11px; }
+.chips button.on { border-color: var(--pink); background: #fff0f6; }
+.colors { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+.colors button { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px #0003; cursor: pointer; padding: 0; }
+.colors button.on { box-shadow: 0 0 0 2px var(--pink); }
+.outfits { display: flex; flex-direction: column; gap: 5px; }
+.outfits button { display: flex; justify-content: space-between; align-items: center; border: 2px solid var(--line); border-radius: 10px; background: #fff; padding: 5px 8px; cursor: pointer; font: inherit; }
+.outfits button.on { border-color: var(--pink); background: #fff0f6; }
+.outfits .sw { display: inline-flex; gap: 2px; margin-left: 6px; }
+.outfits .sw i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; border: 1px solid #0002; }
+.pomo { text-align: center; background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 12px; }
+.pomo-phase { font-weight: 700; color: var(--pink); }
+.pomo-time { font-size: 42px; font-weight: 800; font-variant-numeric: tabular-nums; margin: 4px 0 8px; }
+.pomo-btns { display: flex; gap: 6px; justify-content: center; margin-bottom: 6px; }
+.row { display: flex; align-items: center; gap: 6px; margin: 6px 0; }
+.row input[type=number] { width: 64px; }
+.ach { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
+.ach .a { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 6px 8px; font-size: 12px; }
+.ach .a.lock { opacity: .45; filter: grayscale(1); }
+.ach .a b { display: block; }
+.counters { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; font-size: 12px; }
+.rps { display: flex; gap: 10px; justify-content: center; margin: 10px 0; }
+.rps-b { font-size: 34px; width: 74px; height: 74px; border-radius: 50%; border: 2px solid var(--line); background: #fff; cursor: pointer; transition: transform .1s; }
+.rps-b:hover { transform: scale(1.08); border-color: var(--pink); }
+.rps-res { text-align: center; font-size: 15px; min-height: 48px; }
+.rps-res .big { font-size: 30px; }
+footer { display: flex; justify-content: space-between; padding: 8px 14px; border-top: 1px solid var(--line); background: #fff; }
+.acc-box { background: #fff; border: 1px solid var(--line); border-radius: var(--r); padding: 10px; display: flex; flex-direction: column; gap: 7px; }
+/* fix QA v0.1: niente scroll orizzontale, scrollbar sottile */
+html, body { overflow-x: hidden; }
+* { box-sizing: border-box; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb { background: #e7c6d6; border-radius: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
