@@ -1,7 +1,7 @@
 // Anteprima 3D: ospita il Character Engine in una pagina dell'estensione. Se WebGL o il modello non sono
 // disponibili passa da solo al renderer SVG classico (DC.Body), così la pagina non resta mai vuota.
 // La pagina funziona anche servita in locale (banco di prova): in quel caso non usa le API dell'estensione.
-import { CharacterEngine, QUALITY_PRESETS } from '../engine3d/core/character-engine.js';
+import { CharacterEngine, QUALITY_PRESETS, LIGHTING_PRESETS } from '../engine3d/core/character-engine.js';
 import { loadCharacter, saveCharacter } from '../engine3d/save/character-store.js';
 
 const DC = globalThis.DC; // script v0.2 caricati dalla pagina: impostazioni e renderer SVG
@@ -28,13 +28,49 @@ function button(label, attrs = {}) {
 const mark = (box, value, attr) => box.querySelectorAll('button').forEach((b) => b.classList.toggle('on', b.getAttribute(attr) === value));
 
 async function loadSettings() {
-  if (inExtension) return (await DC.load()).settings;
+  if (inExtension) return (await DC.load()).settings; // carica anche le teste fotografiche dell'utente
   return DC.clone(DC.DEFAULT_SETTINGS);
+}
+
+/** Voce `head` della definizione → foto originale da usare come texture (testa inclusa nel pacchetto o caricata). */
+function resolveHead(h) {
+  const e = DC.headById(h.photoId);
+  if (!e) return null;
+  return { id: e.id, w: e.w, h: e.h, anchorX: e.anchorX, anchorY: e.anchorY, faceW: e.faceW, skin: e.skin, url: inExtension ? DC.headUrl(e) : e.dataUrl || new URL('../../' + e.file, location.href).href };
+}
+
+function buildFaceUi(engine) {
+  const box = $('#faces');
+  const heads = [...DC.HEADS, ...(DC.CUSTOM_HEADS || [])];
+  for (const h of heads) {
+    const b = button('', { 'data-face': h.id, title: h.name, 'aria-label': h.name });
+    const img = document.createElement('img');
+    img.src = resolveHead({ photoId: h.id }).url; img.alt = '';
+    b.append(img, document.createTextNode(h.name));
+    box.appendChild(b);
+  }
+  box.appendChild(button('Viso 3D anime', { 'data-face': '3d' }));
+  const current = () => (engine.headMode === 'photo' ? engine.photoHead.id : '3d');
+  box.addEventListener('click', async (e) => {
+    const b = e.target.closest('button');
+    if (!b || b.dataset.face === current()) return;
+    b.classList.add('busy');
+    try {
+      await engine.setHead(b.dataset.face === '3d' ? { mode: '3d' } : { mode: 'photo', photoId: b.dataset.face });
+      state.def = await saveCharacter(engine.def);
+      // stessa testa anche nel companion classico delle pagine web
+      if (inExtension && b.dataset.face !== '3d') await DC.saveSettings({ headId: b.dataset.face });
+    } catch (err) { console.error('[DC] cambio volto', err); }
+    b.classList.remove('busy');
+    mark(box, current(), 'data-face');
+  });
+  mark(box, current(), 'data-face');
 }
 
 // ---------- renderer 3D ----------
 function build3dUi(engine, settings) {
   const { anim, camera, hair, render } = engine;
+  buildFaceUi(engine);
 
   const clips = $('#clips');
   for (const c of anim.list()) clips.appendChild(button(c.name, { 'data-clip': c.id, title: c.loop ? 'Stato di fondo' : 'Gesto' }));
@@ -64,6 +100,18 @@ function build3dUi(engine, settings) {
   });
   mark(hairBox, hair.style, 'data-hair');
 
+  const lights = $('#lights'), backdrop = document.querySelector('.backdrop');
+  for (const l of LIGHTING_PRESETS) lights.appendChild(button(l.name, { 'data-light': l.id }));
+  const showLight = (p) => { backdrop.style.background = p.backdrop; mark(lights, p.id, 'data-light'); };
+  engine.on('lighting', showLight);
+  showLight(LIGHTING_PRESETS.find((l) => l.id === engine.lighting) || LIGHTING_PRESETS[0]);
+  lights.addEventListener('click', async (e) => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    engine.setLighting(b.dataset.light);
+    if (inExtension) await DC.saveSettings({ light3d: b.dataset.light });
+  });
+
   const quality = $('#quality');
   for (const [id, q] of Object.entries(QUALITY_PRESETS)) quality.appendChild(button(q.label, { 'data-q': id }));
   quality.addEventListener('click', async (e) => {
@@ -83,11 +131,6 @@ function build3dUi(engine, settings) {
   };
   tick(); setInterval(tick, 1000);
 
-  if (state.def.head.mode === 'photo') {
-    const note = $('#note');
-    note.textContent = 'La tua testa fotografica resta attiva nel companion classico. Il renderer 3D per ora mostra il viso 3D: la modalità foto non è ancora disponibile qui.';
-    note.hidden = false;
-  }
   const dock = $('#dock');
   dock.hidden = false;
   // il personaggio resta sopra il pannello dei comandi: l'area 3D finisce dove inizia il pannello
@@ -132,7 +175,7 @@ async function boot() {
   const quality = QUALITY_PRESETS[wanted] ? wanted : 'medium';
   let engine = null;
   try {
-    engine = new CharacterEngine($('#view'), { quality });
+    engine = new CharacterEngine($('#view'), { quality, resolveHead, lighting: params.get('light') || settings.light3d });
     await engine.load(def);
     state.engine = engine;
     state.mode = '3d';

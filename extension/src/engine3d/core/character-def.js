@@ -2,7 +2,8 @@
 // (corpo, viso, capelli, pelle, outfit, testa fotografica). Dati puri: importabile anche dal service worker.
 // API stabile: CHARACTER_VERSION, defaultCharacter(), normalizeCharacter(def), migrateLegacyAvatar(settings),
 // characterItemIds(def).
-export const CHARACTER_VERSION = 1;
+// v2: la testa fotografica (il volto dell'utente) è la modalità predefinita anche nel renderer 3D.
+export const CHARACTER_VERSION = 2;
 
 const DEFAULT_OUTFIT = {
   underTop: { item: 'under_bra_basic' }, underBottom: { item: 'under_brief_basic' },
@@ -13,7 +14,7 @@ const DEFAULT_OUTFIT = {
 export function defaultCharacter() {
   return {
     v: CHARACTER_VERSION,
-    head: { mode: '3d', photoId: 'head_04', photoHair: true, photoScale: 1 }, // mode: '3d' | 'photo'
+    head: { mode: 'photo', photoId: 'head_04', photoHair: true, photoScale: 1 }, // mode: '3d' | 'photo'
     body: {},      // id slider → valore (vedi custom/body-sliders.js); assente = default
     face: {},      // id slider → valore (vedi custom/face-sliders.js)
     eyes: { color: '#7a4a2a', style: 'default' },
@@ -43,9 +44,13 @@ export function normalizeCharacter(def) {
   const d = defaultCharacter();
   if (!isObj(def)) return d;
   const outfit = isObj(def.outfit) ? def.outfit : null;
+  const from = Number.isInteger(def.v) ? def.v : 1;
   merge(d, { ...def, outfit: undefined });
   d.v = CHARACTER_VERSION;
+  // v1 → v2: fino alla v1 il 3D non sapeva mostrare la foto e salvava sempre il viso anime: si passa alla foto
+  if (from < 2) d.head.mode = 'photo';
   if (d.head.mode !== 'photo') d.head.mode = '3d';
+  if (typeof d.head.photoId !== 'string' || d.head.photoId.length > 64) d.head.photoId = 'head_04';
   for (const grp of ['body', 'face']) {
     const clean = {};
     for (const [k, v] of Object.entries(isObj(d[grp]) ? d[grp] : {})) if (typeof v === 'number' && isFinite(v) && k.length < 40) clean[k] = Math.max(-1, Math.min(1, v));

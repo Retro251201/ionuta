@@ -78,6 +78,61 @@ export class HairSystem extends Emitter {
     }
     this.current = { id: entry.id, vrm, head, meshes, colliders, tris: entry.tris, scale: s };
     this.setOutlineEnabled(this.outlineEnabled);
+    this._prepareCut();
+    this._applyCut();
+  }
+
+  /**
+   * Taglio dei capelli davanti al viso (testa fotografica): i triangoli che stanno sopra il mento e nella metà
+   * anteriore della testa non vengono disegnati, così la foto resta in primo piano e i capelli la incorniciano
+   * di lato e da dietro. null = acconciatura completa.
+   * @param {{chinY:number, cutZ:number}|null} cut  misure nello spazio dell'osso testa (canonico, fronte +Z)
+   */
+  setFaceCut(cut) { this.faceCut = cut || null; this._applyCut(); }
+
+  // Posizioni a riposo di ogni vertice nello spazio dell'osso testa dell'avatar (canonico) e indici completi.
+  _prepareCut() {
+    const c = this.current, avatarHead = this.avatar.bones.head;
+    this.avatar.root.updateMatrixWorld(true);
+    const inv = new THREE.Matrix4().copy(avatarHead.matrixWorld).invert(), v = new THREE.Vector3(), flip = this.avatar.isVRM0 ? -1 : 1;
+    c.cut = [];
+    for (const m of c.meshes) {
+      const g = m.geometry;
+      if (!g.index) continue;
+      const p = g.attributes.position, local = new Float32Array(p.count * 3);
+      for (let i = 0; i < p.count; i++) {
+        v.fromBufferAttribute(p, i);
+        if (m.isSkinnedMesh) m.applyBoneTransform(i, v);
+        v.applyMatrix4(m.matrixWorld).applyMatrix4(inv);
+        local[i * 3] = v.x * flip; local[i * 3 + 1] = v.y; local[i * 3 + 2] = v.z * flip;
+      }
+      const full = g.index.array.slice();
+      c.cut.push({ mesh: m, full, local });
+    }
+  }
+
+  _applyCut() {
+    const c = this.current;
+    if (!c || !c.cut) return;
+    const cut = this.faceCut;
+    let hidden = 0;
+    for (const e of c.cut) {
+      const g = e.mesh.geometry, out = g.index.array, full = e.full, L = e.local;
+      let n = 0;
+      for (let t = 0; t < full.length; t += 3) {
+        let keep = true;
+        if (cut) {
+          keep = false;
+          for (let k = 0; k < 3; k++) { const i = full[t + k]; if (L[i * 3 + 1] < cut.chinY || L[i * 3 + 2] < cut.cutZ) { keep = true; break; } }
+        }
+        if (keep) { out[n++] = full[t]; out[n++] = full[t + 1]; out[n++] = full[t + 2]; } else hidden++;
+      }
+      g.index.needsUpdate = true;
+      const mats = Array.isArray(e.mesh.material) ? e.mesh.material : [e.mesh.material];
+      if (g.groups.length) { g.clearGroups(); mats.forEach((_, k) => g.addGroup(0, n, k)); }
+      g.setDrawRange(0, n);
+    }
+    this.hiddenTriangles = hidden;
   }
 
   _unmount() {
