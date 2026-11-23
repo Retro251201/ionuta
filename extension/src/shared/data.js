@@ -17,7 +17,7 @@
     hairStyle: 'long', // DC.HAIR_STYLES (capelli disegnati DIETRO la foto)
     hairColor: '#3a2a33',
     accessory: 'none', // DC.ACCESSORIES
-    quality3d: 'medium', // preset del renderer 3D: low | medium | high | ultra
+    quality3d: 'ultra', // preset del renderer 3D: low | medium | high | ultra
     walk: true,
     followCursor: true,
     physics: true,

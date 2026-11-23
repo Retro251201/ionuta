@@ -19,7 +19,7 @@ export const CHARACTER_MODELS = [
   { id: 'female', name: 'Corpo personalizzabile', file: 'avatar/female.vrm', kind: 'base' }
 ];
 export const MODEL_BY_ID = Object.fromEntries(CHARACTER_MODELS.map((m) => [m.id, m]));
-export const DEFAULT_MODEL = 'vivi';
+export const DEFAULT_MODEL = 'nyan';
 
 const DEFAULT_OUTFIT = {
   underTop: { item: 'bra_lace' }, underBottom: { item: 'panties_lace' },
@@ -31,7 +31,7 @@ export function defaultCharacter() {
   return {
     v: CHARACTER_VERSION,
     model: DEFAULT_MODEL, // quale personaggio/corpo (vedi CHARACTER_MODELS)
-    head: { mode: 'photo', photoId: 'head_04', photoHair: true, photoScale: 1 }, // mode: '3d' | 'photo'
+    head: { mode: 'photo', photoId: 'head_02', photoHair: true, photoScale: 1 }, // mode: '3d' | 'photo'
     body: {},      // id slider → valore (vedi custom/body-sliders.js); assente = default
     face: {},      // id slider → valore (vedi custom/face-sliders.js)
     eyes: { color: '#7a4a2a', style: 'default' },
@@ -104,6 +104,7 @@ export function migrateLegacyAvatar(settings) {
   const s = settings || {};
   d.model = 'female'; // chi arriva dalla v0.2 aveva capelli e outfit scelti: resta sul corpo personalizzabile
   d.head.mode = 'photo';
+  d.head.photoId = 'head_04'; // chi migra mantiene la testa predefinita storica, salvo quella scelta nelle impostazioni
   if (typeof s.headId === 'string') d.head.photoId = s.headId;
   d.head.photoHair = s.hairStyle !== 'none';
   if (LEGACY_HAIR[s.hairStyle]) d.hair.style = LEGACY_HAIR[s.hairStyle];
