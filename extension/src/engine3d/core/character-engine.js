@@ -13,6 +13,9 @@ import { AnimationController } from '../anim/animation-controller.js';
 import { LookController } from '../anim/look-controller.js';
 import { normalizeCharacter } from './character-def.js';
 import { Emitter } from './events.js';
+import { LIGHTING_PRESETS, LIGHTING_BY_ID } from '../render/lighting-presets.js';
+
+export { LIGHTING_PRESETS };
 
 export { QUALITY_PRESETS };
 
@@ -59,6 +62,7 @@ export class CharacterEngine extends Emitter {
     }
     this.wardrobe.on('change', () => this._ground());
     await this.apply(def);
+    if (!this.setLighting(o.lighting)) this.setLighting('studio');
     this.anim.setBase('idle', { fade: 0 });
     this._offUpdate = this.render.onUpdate((dt) => this.update(dt));
     this._applyQuality();
@@ -125,6 +129,17 @@ export class CharacterEngine extends Emitter {
   }
 
   setQuality(name) { this.render.setQuality(name); }
+
+  /** Preset di illuminazione: luci della scena e tinta della foto del volto. */
+  setLighting(id) {
+    const p = LIGHTING_BY_ID[id];
+    if (!p) return null;
+    this.render.setLighting(p.light);
+    this.photoHead.setTint(p.tint);
+    this.lighting = id;
+    this.emit('lighting', p);
+    return p;
+  }
 
   update(dt) {
     this.anim.update(dt);

@@ -415,6 +415,9 @@ async function stage(env) {
   await page.click('#faces [data-face="head_02"]');
   await page.waitForFunction(() => window.__dcStage.engine.photoHead.id === 'head_02', null, { timeout: 60000 });
   const face2 = await page.evaluate(async () => { const e = window.__dcStage.engine, st = await chrome.storage.local.get(['dc_avatar', 'dc_settings']); return { src: e.photoHead.identity().textureSrc, saved: st.dc_avatar.head, headId: st.dc_settings.headId, skin: e.avatar.skinTone }; });
+  await page.click('#lights [data-light="neon"]');
+  const neon = await page.evaluate(async () => { const e = window.__dcStage.engine, st = await chrome.storage.local.get('dc_settings'); return { id: e.lighting, rim: e.render.lights.rim.color.getHexString(), saved: st.dc_settings.light3d, bg: document.querySelector('.backdrop').style.background.length }; });
+  check('interfaccia: preset di luce Neon Night applicato alla scena e salvato', neon.id === 'neon' && neon.rim === '7af7ff' && neon.saved === 'neon' && neon.bg > 20, '#' + neon.rim);
   check('interfaccia: "Viso 3D anime" ripristina viso e capelli completi e viene salvato', face3d.visible && face3d.cut === 0 && face3d.saved === '3d');
   check('interfaccia: scelta di un\'altra foto applicata, salvata e condivisa col companion classico; carnagione dalla foto', face2.src.endsWith('/assets/heads/head_02.png') && face2.saved.mode === 'photo' && face2.saved.photoId === 'head_02' && face2.headId === 'head_02' && face2.skin === '#875f54', face2.skin);
   check('interfaccia: inquadratura "Viso" con transizione della camera', uiLow.frame === 'face' && uiLow.dist < 1.4, `distanza ${uiLow.dist.toFixed(2)} m`);
