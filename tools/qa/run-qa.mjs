@@ -424,7 +424,7 @@ async function stage(env) {
   await page.waitForFunction(() => window.__dcStage.engine.headMode === '3d' && window.__dcStage.def.head.mode === '3d', null, { timeout: 60000 });
   const face3d = await page.evaluate(async () => { const e = window.__dcStage.engine; return { visible: e.avatar.face.skin.visible, cut: e.hair.hiddenTriangles, saved: (await chrome.storage.local.get('dc_avatar')).dc_avatar.head.mode }; });
   await page.click('#faces [data-face="head_02"]');
-  await page.waitForFunction(async () => window.__dcStage.engine.photoHead.id === 'head_02' && ((await chrome.storage.local.get('dc_settings')).dc_settings || {}).headId === 'head_02', null, { timeout: 60000 });
+  await page.waitForFunction(async () => { const e = window.__dcStage.engine; return e.photoHead.id === 'head_02' && e.photoHead.active && !!e.photoHead.identity() && ((await chrome.storage.local.get('dc_settings')).dc_settings || {}).headId === 'head_02'; }, null, { timeout: 60000 });
   const face2 = await page.evaluate(async () => { const e = window.__dcStage.engine, st = await chrome.storage.local.get(['dc_avatar', 'dc_settings']); return { src: e.photoHead.identity().textureSrc, saved: st.dc_avatar.head, headId: st.dc_settings.headId, skin: e.avatar.skinTone }; });
   // guardaroba dall'interfaccia: un look preimpostato e un singolo capo, applicati e salvati
   await page.click('#looks [data-look="date_night"]');
