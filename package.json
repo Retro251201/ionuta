@@ -2,18 +2,23 @@
   "name": "desktop-companion",
   "version": "0.3.0",
   "private": true,
-  "description": "Desktop Companion (verso la 1.0 Premium) – toolchain di sviluppo: vendor bundle, pipeline asset, test e QA. L'estensione in extension/ non richiede build per essere caricata. La versione segue extension/manifest.json.",
+  "description": "Desktop Companion (verso la 1.0 Premium) \u2013 toolchain di sviluppo: vendor bundle, pipeline asset, test e QA. L'estensione in extension/ non richiede build per essere caricata. La versione segue extension/manifest.json.",
   "type": "module",
   "scripts": {
     "vendor": "node tools/pipeline/build-vendor.mjs",
     "licenses": "node tools/pipeline/audit-licenses.mjs",
     "test": "node --test \"tools/tests/*.test.mjs\"",
     "qa": "node tools/qa/run-qa.mjs",
-    "check": "npm test && npm run qa"
+    "check": "npm test && npm run qa",
+    "desktop": "electron desktop/main.js",
+    "dist:win": "node tools/desktop/build.mjs win32",
+    "dist:linux": "node tools/desktop/build.mjs linux"
   },
   "devDependencies": {
+    "@electron/packager": "^20.3.0",
     "@pixiv/three-vrm": "^3.5.5",
     "@pixiv/three-vrm-animation": "^3.5.5",
+    "electron": "^45.4.1",
     "esbuild": "^0.28.2",
     "playwright-core": "^1.65.0",
     "sharp": "^0.35.5",

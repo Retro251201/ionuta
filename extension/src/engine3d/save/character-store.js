@@ -30,5 +30,7 @@ export async function saveCharacter(def) {
   const d = normalizeCharacter(def);
   const s = store();
   if (s) await s.set({ [AVATAR_KEY]: d }); else localStorage.setItem(AVATAR_KEY, JSON.stringify(d));
+  // app desktop: il personaggio sul desktop si ricarica con le nuove scelte fatte nello Studio
+  if (globalThis.dcDesktop && globalThis.dcDesktop.changed) globalThis.dcDesktop.changed();
   return d;
 }

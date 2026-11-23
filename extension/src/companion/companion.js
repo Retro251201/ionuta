@@ -49,6 +49,27 @@ async function boot() {
     const isOver = (nx, ny) => { ray.setFromCamera({ x: nx, y: ny }, engine.render.camera); return ray.intersectObject(engine.avatar.root, true).length > 0; };
     window.addEventListener('message', (e) => { const m = e.data; if (m && m.type === 'dc-hit') parent.postMessage({ type: 'dc-hit-res', over: isOver(m.nx, m.ny) }, '*'); });
 
+    // chi ospita il personaggio: app desktop (Electron, finestra trasparente) o pagina web (iframe)
+    const D = globalThis.dcDesktop;
+    let lastSX = 0, lastSY = 0;
+    const host = D ? {
+      over: (on) => D.setInteractive(on),
+      dragStart: (e) => { lastSX = e.screenX; lastSY = e.screenY; D.setInteractive(true); },
+      dragMove: (e) => { D.moveBy(e.screenX - lastSX, e.screenY - lastSY); lastSX = e.screenX; lastSY = e.screenY; },
+      dragEnd: () => D.dragEnd()
+    } : {
+      over: (on) => parent.postMessage({ type: 'dc-hit-res', over: on }, '*'),
+      dragStart: () => parent.postMessage({ type: 'dc-drag-start' }, '*'),
+      dragMove: (e) => parent.postMessage({ type: 'dc-drag-move', dx: e.movementX, dy: e.movementY }, '*'),
+      dragEnd: () => parent.postMessage({ type: 'dc-drag-end' }, '*')
+    };
+    if (D) {
+      D.on((m) => { if (m && m.type === 'reload') location.reload(); });
+      // doppio clic o tasto destro sul personaggio: apre lo Studio
+      engine.render.canvas.addEventListener('dblclick', () => D.openStudio());
+      engine.render.canvas.addEventListener('contextmenu', (e) => { e.preventDefault(); D.openStudio(); });
+    }
+
     if (embed) {
       // trascinamento: cattura il puntatore e invia gli spostamenti alla pagina ospite; un tocco senza
       // spostamento è una reazione. La pagina companion non ha pannelli: è solo il personaggio.
@@ -60,25 +81,25 @@ async function boot() {
         if (drag) return;
         const r = cv.getBoundingClientRect();
         const nx = ((e.clientX - r.left) / r.width) * 2 - 1, ny = -(((e.clientY - r.top) / r.height) * 2 - 1);
-        parent.postMessage({ type: 'dc-hit-res', over: isOver(nx, ny) }, '*');
+        host.over(isOver(nx, ny));
       });
       cv.addEventListener('pointerdown', (e) => {
         if (e.button !== 0) return;
         drag = { id: e.pointerId }; moved = false;
         try { cv.setPointerCapture(e.pointerId); } catch (_) {}
         cv.style.cursor = 'grabbing';
-        parent.postMessage({ type: 'dc-drag-start' }, '*');
+        host.dragStart(e);
       });
       cv.addEventListener('pointermove', (e) => {
         if (!drag) return;
         if (Math.abs(e.movementX) + Math.abs(e.movementY) > 0) moved = true;
-        parent.postMessage({ type: 'dc-drag-move', dx: e.movementX, dy: e.movementY }, '*');
+        host.dragMove(e);
       });
       const endDrag = (e) => {
         if (!drag) return;
         try { cv.releasePointerCapture(drag.id); } catch (_) {}
         drag = null; cv.style.cursor = 'grab';
-        parent.postMessage({ type: 'dc-drag-end' }, '*');
+        host.dragEnd();
         if (!moved) { playRandom(); if (DC.line) say(DC.line('idle')); } // tocco senza trascinamento = reazione
       };
       cv.addEventListener('pointerup', endDrag);
