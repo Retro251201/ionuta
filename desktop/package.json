@@ -1,7 +1,7 @@
 {
   "name": "desktop-companion",
   "productName": "Desktop Companion",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Desktop mate 3D: personaggio anime trasparente sul desktop",
   "main": "main.js",
   "type": "commonjs",

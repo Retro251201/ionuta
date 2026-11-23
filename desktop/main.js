@@ -32,6 +32,8 @@ function createMate() {
   mate.setIgnoreMouseEvents(true, { forward: true }); // clic al desktop; i movimenti arrivano comunque al renderer
   mate.loadURL('app://dc/src/companion/companion.html?desktop=1&embed=1&q=ultra');
   mate.once('ready-to-show', () => mate.showInactive());
+  let lastScale = screen.getDisplayMatching(mate.getBounds()).scaleFactor;
+  mate.on('move', () => { try { const sf = screen.getDisplayMatching(mate.getBounds()).scaleFactor; if (sf !== lastScale) { lastScale = sf; mate.setContentSize(W, H); } } catch (e) {} });
   mate.on('moved', savePos);
   mate.on('closed', () => { mate = null; });
 }
