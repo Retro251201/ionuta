@@ -89,6 +89,10 @@ fuse, miniatura rimossa). Sono personaggi di esempio originali di VRoid, non per
 | `avatar/models/victoria.vrm` | Victoria_Rubin | CC0-1.0 |
 | `avatar/models/vita.vrm` | Vita | CC0-1.0 |
 | `avatar/models/shino.vrm` | Sendagaya_Shino | CC0-1.0 |
+| `avatar/models/darkness.vrm` | Darkness_Shibu | CC0-1.0 |
+| `avatar/models/nyan.vrm` | HairSample_Female | CC0-1.0 |
+| `avatar/models/fumi.vrm` | Sakurada_Fumiriya | CC0-1.0 |
+| `avatar/models/sendagaya.vrm` | Sendagaya_Shibu | CC0-1.0 |
 
 ## 3. Contenuti generati dal progetto (nessun asset esterno)
 

@@ -492,7 +492,7 @@ async function stage(env) {
       grounded: Math.abs(e.avatar.root.position.y - e.groundOffsetValue()) < 1e-6, rowHidden: document.querySelector('#rowWardrobe').hidden,
       menu: document.querySelectorAll('#models button').length, saved: st.dc_avatar.model };
   });
-  check('modello: "Vivi" (personaggio completo) scelto dal menu, con testa fotografica e senza guardaroba modulare', mdl.kind === 'full' && !mdl.wardrobe && !mdl.hair && mdl.photo && mdl.rowHidden && mdl.menu === 5 && mdl.saved === 'vivi' && mdl.grounded, `menu ${mdl.menu} modelli, ${mdl.tris} tri`);
+  check('modello: "Vivi" (personaggio completo) scelto dal menu, con testa fotografica e senza guardaroba modulare', mdl.kind === 'full' && !mdl.wardrobe && !mdl.hair && mdl.photo && mdl.rowHidden && mdl.menu === 9 && mdl.saved === 'vivi' && mdl.grounded, `menu ${mdl.menu} modelli, ${mdl.tris} tri`);
   await page.screenshot({ path: `${OUT}/36_stage_model_vivi.png` });
 
   // --- rilascio delle risorse GPU ---
