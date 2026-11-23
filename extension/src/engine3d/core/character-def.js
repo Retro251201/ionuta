@@ -3,7 +3,19 @@
 // API stabile: CHARACTER_VERSION, defaultCharacter(), normalizeCharacter(def), migrateLegacyAvatar(settings),
 // characterItemIds(def).
 // v2: la testa fotografica (il volto dell'utente) è la modalità predefinita anche nel renderer 3D.
-export const CHARACTER_VERSION = 2;
+export const CHARACTER_VERSION = 3;
+
+/** Modelli selezionabili nel menu. kind 'full' = personaggio completo CC0 (corpo, viso, capelli, vestiti già
+ *  pronti: sopra ci va solo il volto fotografico); kind 'base' = corpo personalizzabile con guardaroba e capelli. */
+export const CHARACTER_MODELS = [
+  { id: 'vivi', name: 'Vivi', file: 'avatar/models/vivi.vrm', kind: 'full' },
+  { id: 'victoria', name: 'Victoria', file: 'avatar/models/victoria.vrm', kind: 'full' },
+  { id: 'vita', name: 'Vita', file: 'avatar/models/vita.vrm', kind: 'full' },
+  { id: 'shino', name: 'Shino', file: 'avatar/models/shino.vrm', kind: 'full' },
+  { id: 'female', name: 'Corpo personalizzabile', file: 'avatar/female.vrm', kind: 'base' }
+];
+export const MODEL_BY_ID = Object.fromEntries(CHARACTER_MODELS.map((m) => [m.id, m]));
+export const DEFAULT_MODEL = 'vivi';
 
 const DEFAULT_OUTFIT = {
   underTop: { item: 'bra_lace' }, underBottom: { item: 'panties_lace' },
@@ -14,6 +26,7 @@ const DEFAULT_OUTFIT = {
 export function defaultCharacter() {
   return {
     v: CHARACTER_VERSION,
+    model: DEFAULT_MODEL, // quale personaggio/corpo (vedi CHARACTER_MODELS)
     head: { mode: 'photo', photoId: 'head_04', photoHair: true, photoScale: 1 }, // mode: '3d' | 'photo'
     body: {},      // id slider → valore (vedi custom/body-sliders.js); assente = default
     face: {},      // id slider → valore (vedi custom/face-sliders.js)
@@ -47,6 +60,7 @@ export function normalizeCharacter(def) {
   const from = Number.isInteger(def.v) ? def.v : 1;
   merge(d, { ...def, outfit: undefined });
   d.v = CHARACTER_VERSION;
+  if (typeof d.model !== 'string' || !MODEL_BY_ID[d.model]) d.model = DEFAULT_MODEL;
   // v1 → v2: fino alla v1 il 3D non sapeva mostrare la foto e salvava sempre il viso anime: si passa alla foto
   if (from < 2) d.head.mode = 'photo';
   if (d.head.mode !== 'photo') d.head.mode = '3d';
@@ -84,6 +98,7 @@ const LEGACY_HAIR = { none: null, long: 'long', wavy: 'layered', bob: 'mushroom'
 export function migrateLegacyAvatar(settings) {
   const d = defaultCharacter();
   const s = settings || {};
+  d.model = 'female'; // chi arriva dalla v0.2 aveva capelli e outfit scelti: resta sul corpo personalizzabile
   d.head.mode = 'photo';
   if (typeof s.headId === 'string') d.head.photoId = s.headId;
   d.head.photoHair = s.hairStyle !== 'none';

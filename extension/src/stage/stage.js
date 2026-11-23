@@ -4,6 +4,7 @@
 import { CharacterEngine, QUALITY_PRESETS, LIGHTING_PRESETS } from '../engine3d/core/character-engine.js';
 import { loadCharacter, saveCharacter } from '../engine3d/save/character-store.js';
 import { SLOTS, ITEMS, PRESET_LOOKS } from '../engine3d/wardrobe/catalog/index.js';
+import { CHARACTER_MODELS } from '../engine3d/core/character-def.js';
 
 const DC = globalThis.DC; // script v0.2 caricati dalla pagina: impostazioni e renderer SVG
 const inExtension = typeof chrome !== 'undefined' && !!(chrome.runtime && chrome.runtime.id);
@@ -119,11 +120,31 @@ function buildWardrobeUi(engine) {
   renderItems();
 }
 
+function buildModelsUi(engine) {
+  const box = $('#models');
+  for (const m of CHARACTER_MODELS) box.appendChild(button(m.name, { 'data-model': m.id, title: m.kind === 'full' ? 'Personaggio completo' : 'Corpo personalizzabile con guardaroba' }));
+  mark(box, engine.model, 'data-model');
+  box.addEventListener('click', async (e) => {
+    const b = e.target.closest('button');
+    if (!b || b.dataset.model === engine.model) return;
+    b.classList.add('busy');
+    engine.def.model = b.dataset.model;
+    await saveCharacter(engine.def); // il cambio modello ricarica la scena (sistemi diversi per corpo base e personaggio completo)
+    location.reload();
+  });
+  // il corpo personalizzabile ha guardaroba e capelli; il personaggio completo porta i suoi vestiti e capelli
+  const full = engine.modelKind === 'full';
+  $('#rowLooks').hidden = full;
+  $('#rowWardrobe').hidden = full;
+  $('#rowHair').hidden = full || !engine.hair;
+}
+
 // ---------- renderer 3D ----------
 function build3dUi(engine, settings) {
   const { anim, camera, hair, render } = engine;
+  buildModelsUi(engine);
   buildFaceUi(engine);
-  buildWardrobeUi(engine);
+  if (engine.modelKind === 'base') buildWardrobeUi(engine);
 
   const clips = $('#clips');
   for (const c of anim.list()) clips.appendChild(button(c.name, { 'data-clip': c.id, title: c.loop ? 'Stato di fondo' : 'Gesto' }));
@@ -139,19 +160,21 @@ function build3dUi(engine, settings) {
   showFrame(camera.frameName);
 
   const hairBox = $('#hair');
-  for (const h of hair.list()) hairBox.appendChild(button(h.name, { 'data-hair': h.id }));
-  hairBox.addEventListener('click', async (e) => {
-    const b = e.target.closest('button');
-    if (!b || b.dataset.hair === hair.style) return;
-    b.classList.add('busy');
-    try {
-      await engine.setHair(b.dataset.hair);
-      state.def = await saveCharacter(engine.def); // la scelta resta salvata (e finisce nel backup)
-    } catch (err) { console.error('[DC] cambio acconciatura', err); }
-    b.classList.remove('busy');
+  if (hair) {
+    for (const h of hair.list()) hairBox.appendChild(button(h.name, { 'data-hair': h.id }));
+    hairBox.addEventListener('click', async (e) => {
+      const b = e.target.closest('button');
+      if (!b || b.dataset.hair === hair.style) return;
+      b.classList.add('busy');
+      try {
+        await engine.setHair(b.dataset.hair);
+        state.def = await saveCharacter(engine.def); // la scelta resta salvata (e finisce nel backup)
+      } catch (err) { console.error('[DC] cambio acconciatura', err); }
+      b.classList.remove('busy');
+      mark(hairBox, hair.style, 'data-hair');
+    });
     mark(hairBox, hair.style, 'data-hair');
-  });
-  mark(hairBox, hair.style, 'data-hair');
+  }
 
   const lights = $('#lights'), backdrop = document.querySelector('.backdrop');
   for (const l of LIGHTING_PRESETS) lights.appendChild(button(l.name, { 'data-light': l.id }));

@@ -11,7 +11,8 @@ import { HairSystem } from '../custom/hair-system.js';
 import { PhotoHead } from '../custom/photo-head.js';
 import { AnimationController } from '../anim/animation-controller.js';
 import { LookController } from '../anim/look-controller.js';
-import { normalizeCharacter } from './character-def.js';
+import { normalizeCharacter, MODEL_BY_ID, DEFAULT_MODEL } from './character-def.js';
+import { THREE } from '../lib.js';
 import { Emitter } from './events.js';
 import { LIGHTING_PRESETS, LIGHTING_BY_ID } from '../render/lighting-presets.js';
 
@@ -43,14 +44,23 @@ export class CharacterEngine extends Emitter {
   async load(def) {
     if (!CharacterEngine.webglAvailable()) throw new Error('WebGL 2 non disponibile');
     const o = this.opts;
+    const model = MODEL_BY_ID[(def && def.model)] || MODEL_BY_ID[DEFAULT_MODEL];
+    this.model = model.id;
+    this.modelKind = model.kind;
     this.render = new RenderingEngine(this.container, { quality: o.quality, transparent: o.transparent, autoPause: o.autoPause });
     this.assets = new AssetManager();
-    this.avatar = await loadAvatar(this.assets);
+    this.avatar = await loadAvatar(this.assets, model.file);
     this.render.scene.add(this.avatar.root);
     this.materials = new MaterialSystem();
-    this.wardrobe = new WardrobeManager({ avatar: this.avatar, materials: this.materials });
-    this.hair = new HairSystem({ avatar: this.avatar, assets: this.assets });
-    await this.hair.init();
+    // Corpo personalizzabile: guardaroba modulare + acconciature. Personaggio completo: usa i propri vestiti e capelli.
+    if (model.kind === 'base') {
+      this.wardrobe = new WardrobeManager({ avatar: this.avatar, materials: this.materials });
+      this.hair = new HairSystem({ avatar: this.avatar, assets: this.assets });
+      await this.hair.init();
+      this.wardrobe.on('change', () => this._ground());
+    } else {
+      this.groundOffset = this._measureGround();
+    }
     this.photoHead = new PhotoHead({ avatar: this.avatar, assets: this.assets });
     this.anim = new AnimationController({ avatar: this.avatar });
     this.look = new LookController({ avatar: this.avatar });
@@ -60,7 +70,6 @@ export class CharacterEngine extends Emitter {
       this._onPointer = (e) => this.look.pointer(e, this.render.canvas);
       addEventListener('pointermove', this._onPointer, { passive: true });
     }
-    this.wardrobe.on('change', () => this._ground());
     await this.apply(def);
     if (!this.setLighting(o.lighting)) this.setLighting('studio');
     this.anim.setBase('idle', { fade: 0 });
@@ -69,8 +78,8 @@ export class CharacterEngine extends Emitter {
     this.render.on('quality', () => this._applyQuality());
     // qualche passo a vuoto: posa iniziale e capelli già assestati al primo fotogramma visibile
     for (let i = 0; i < 20; i++) this.update(1 / 30);
-    this.hair.resetPhysics();
-    this.camera.frame('full', { animate: false, lift: this.wardrobe.groundOffset });
+    if (this.hair) this.hair.resetPhysics();
+    this.camera.frame('full', { animate: false, lift: this.groundOffsetValue() });
     this.render.start();
     this.ready = true;
     this.emit('ready');
@@ -81,16 +90,35 @@ export class CharacterEngine extends Emitter {
   async apply(def) {
     const d = normalizeCharacter(def);
     this.def = d;
-    const res = this.wardrobe.setOutfit(d.outfit);
+    let res = { errors: [] };
+    if (this.wardrobe) { res = this.wardrobe.setOutfit(d.outfit); }
     this._ground();
-    await this.hair.setStyle(d.hair.style || null);
+    if (this.hair) await this.hair.setStyle(d.hair.style || null);
     await this._applyHead(d.head);
     this.emit('applied', { def: d, outfitErrors: res.errors });
     return d;
   }
 
+  /** Quota del pavimento del modello corrente (scarpe del guardaroba o piedi del personaggio completo). */
+  groundOffsetValue() { return this.wardrobe ? this.wardrobe.groundOffset : (this.groundOffset || 0); }
+
+  /** Personaggio completo: porta i piedi a y=0 misurando il punto più basso delle mesh. */
+  _measureGround() {
+    this.avatar.root.position.y = 0;
+    this.avatar.root.updateMatrixWorld(true);
+    let minY = Infinity;
+    const v = new THREE.Vector3();
+    this.avatar.root.traverse((o) => {
+      if (!o.isMesh || !o.geometry || !o.geometry.attributes.position) return;
+      const p = o.geometry.attributes.position, step = Math.max(1, Math.floor(p.count / 1500));
+      for (let i = 0; i < p.count; i += step) { v.fromBufferAttribute(p, i); if (o.isSkinnedMesh) o.boneTransform ? o.boneTransform(i, v) : o.applyBoneTransform(i, v); o.localToWorld(v); if (v.y < minY) minY = v.y; }
+    });
+    return isFinite(minY) ? -minY : 0;
+  }
+
   /** Cambia acconciatura e aggiorna la definizione corrente. */
   async setHair(id) {
+    if (!this.hair) return this.def;
     await this.hair.setStyle(id);
     this.hair.setFaceCut(this.photoHead.active ? this.photoHead.hairCut() : null);
     this.def.hair.style = this.hair.style;
@@ -106,8 +134,9 @@ export class CharacterEngine extends Emitter {
     }
     await this.photoHead.set(desc);
     this.headMode = desc ? 'photo' : '3d';
-    this.hair.setFaceCut(desc ? this.photoHead.hairCut() : null);
-    this.avatar.setSkinTone(desc && /^#[0-9a-f]{6}$/i.test(desc.skin || '') ? desc.skin : this.def.skin.tone);
+    if (this.hair) this.hair.setFaceCut(desc ? this.photoHead.hairCut() : null);
+    // la carnagione del corpo segue la foto solo sul corpo personalizzabile (i personaggi completi hanno il loro stile)
+    if (this.modelKind === 'base') this.avatar.setSkinTone(desc && /^#[0-9a-f]{6}$/i.test(desc.skin || '') ? desc.skin : this.def.skin.tone);
     this.emit('head', { mode: this.headMode, id: this.photoHead.id });
   }
 
@@ -121,6 +150,7 @@ export class CharacterEngine extends Emitter {
 
   /** Applica un outfit completo e aggiorna la definizione (per i look preimpostati e il randomizer). */
   setOutfit(outfit) {
+    if (!this.wardrobe) return { ok: false, errors: [] };
     const res = this.wardrobe.setOutfit(outfit || {});
     this.def.outfit = this.wardrobe.outfit;
     this.emit('outfit', { outfit: this.def.outfit });
@@ -129,19 +159,20 @@ export class CharacterEngine extends Emitter {
 
   /** Indossa o toglie (id null) un capo in uno slot e aggiorna la definizione. */
   equipItem(slot, id, config = {}) {
+    if (!this.wardrobe) return { ok: false };
     const res = id ? this.wardrobe.equip(slot, id, config) : this.wardrobe.unequip(slot);
     this.def.outfit = this.wardrobe.outfit;
     this.emit('outfit', { outfit: this.def.outfit });
     return res;
   }
 
-  _ground() { this.avatar.root.position.y = this.wardrobe.groundOffset; }
+  _ground() { this.avatar.root.position.y = this.groundOffsetValue(); }
 
   _applyQuality() {
     const on = !!this.render.quality.outline;
     this.avatar.setOutlineEnabled(on);
     this.materials.setOutlineEnabled(on);
-    this.hair.setOutlineEnabled(on);
+    if (this.hair) this.hair.setOutlineEnabled(on);
   }
 
   setQuality(name) { this.render.setQuality(name); }
@@ -161,7 +192,7 @@ export class CharacterEngine extends Emitter {
     this.anim.update(dt);
     this.look.update(dt, this.render.camera);
     this.avatar.update(dt);
-    this.hair.update(dt);
+    if (this.hair) this.hair.update(dt);
     this.camera.update(dt);
   }
 
