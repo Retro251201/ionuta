@@ -97,9 +97,17 @@ fuse, miniatura rimossa). Sono personaggi di esempio originali di VRoid, non per
 ### 2-quater. Animazioni (.vrma)
 
 Libreria di animazioni in formato **VRM Animation (.vrma)** caricate a runtime e retargettate sul modello scelto
-(`extension/assets/anim/VRMA_01…07.vrma`, indice `anim/index.json`). Sono clip di **sola motion** (nessun
-personaggio), del pacchetto di animazioni VRMA distribuito gratuitamente da pixiv per VRoid/VRM. Il caricatore è
-`@pixiv/three-vrm-animation` (MIT), incluso nel bundle vendor.
+(`extension/assets/anim/*.vrma`, indice `anim/index.json`). Sono clip di **sola motion** (nessun personaggio).
+Il caricatore è `@pixiv/three-vrm-animation` (MIT), incluso nel bundle vendor.
+
+| File | Motion | Fonte | Licenza |
+|---|---|---|---|
+| `VRMA_01…07.vrma` | pose e gesti | pacchetto animazioni VRMA gratuito di pixiv per VRoid/VRM | uso libero (pixiv) |
+| `slow_body_roll.vrma` | ballo "body roll" | Innerscene (da asset CC0 MakeHuman), convertito in VRMA | CC0 1.0 |
+| `club_phrase.vrma` | ballo da club | Innerscene (da asset CC0 MakeHuman), convertito in VRMA | CC0 1.0 |
+
+Le due clip di ballo sono **CC0 1.0** alla fonte (<https://www.innerscene.com>, adattate da asset CC0 MakeHuman);
+attribuzione non richiesta, tenuta qui come provenienza. Non sono incluse animazioni di origine Mixamo/Adobe.
 
 ## 3. Contenuti generati dal progetto (nessun asset esterno)
 
