@@ -119,6 +119,22 @@ export class CharacterEngine extends Emitter {
     return this.def;
   }
 
+  /** Applica un outfit completo e aggiorna la definizione (per i look preimpostati e il randomizer). */
+  setOutfit(outfit) {
+    const res = this.wardrobe.setOutfit(outfit || {});
+    this.def.outfit = this.wardrobe.outfit;
+    this.emit('outfit', { outfit: this.def.outfit });
+    return res;
+  }
+
+  /** Indossa o toglie (id null) un capo in uno slot e aggiorna la definizione. */
+  equipItem(slot, id, config = {}) {
+    const res = id ? this.wardrobe.equip(slot, id, config) : this.wardrobe.unequip(slot);
+    this.def.outfit = this.wardrobe.outfit;
+    this.emit('outfit', { outfit: this.def.outfit });
+    return res;
+  }
+
   _ground() { this.avatar.root.position.y = this.wardrobe.groundOffset; }
 
   _applyQuality() {

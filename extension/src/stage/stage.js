@@ -3,6 +3,7 @@
 // La pagina funziona anche servita in locale (banco di prova): in quel caso non usa le API dell'estensione.
 import { CharacterEngine, QUALITY_PRESETS, LIGHTING_PRESETS } from '../engine3d/core/character-engine.js';
 import { loadCharacter, saveCharacter } from '../engine3d/save/character-store.js';
+import { SLOTS, ITEMS, PRESET_LOOKS } from '../engine3d/wardrobe/catalog/index.js';
 
 const DC = globalThis.DC; // script v0.2 caricati dalla pagina: impostazioni e renderer SVG
 const inExtension = typeof chrome !== 'undefined' && !!(chrome.runtime && chrome.runtime.id);
@@ -67,10 +68,62 @@ function buildFaceUi(engine) {
   mark(box, current(), 'data-face');
 }
 
+async function persistOutfit(engine) {
+  state.def = await saveCharacter(engine.def);
+}
+
+function buildWardrobeUi(engine) {
+  // --- look preimpostati ---
+  const looks = $('#looks');
+  for (const l of PRESET_LOOKS) looks.appendChild(button(l.name, { 'data-look': l.id }));
+  looks.addEventListener('click', async (e) => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    const l = PRESET_LOOKS.find((x) => x.id === b.dataset.look);
+    if (!l) return;
+    b.classList.add('busy');
+    engine.setOutfit(l.outfit);
+    await persistOutfit(engine);
+    b.classList.remove('busy');
+    renderItems();
+  });
+
+  // --- guardaroba per slot ---
+  const slotsBox = $('#wslots'), itemsBox = $('#witems');
+  const bySlot = {};
+  for (const it of ITEMS) (bySlot[it.slot] = bySlot[it.slot] || []).push(it);
+  const usableSlots = SLOTS.filter((s) => bySlot[s.id]);
+  let activeSlot = usableSlots[0].id;
+  for (const s of usableSlots) { const b = button(s.icon + ' ' + s.name, { 'data-slot': s.id }); slotsBox.appendChild(b); }
+  slotsBox.addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; activeSlot = b.dataset.slot; mark(slotsBox, activeSlot, 'data-slot'); renderItems(); });
+
+  function renderItems() {
+    mark(slotsBox, activeSlot, 'data-slot');
+    const worn = engine.wardrobe.itemIn(activeSlot);
+    itemsBox.replaceChildren();
+    const none = button('— Niente', { 'data-item': '' });
+    itemsBox.appendChild(none);
+    for (const it of bySlot[activeSlot]) itemsBox.appendChild(button(it.name, { 'data-item': it.id, title: it.styles.join(', ') }));
+    mark(itemsBox, worn || '', 'data-item');
+  }
+  itemsBox.addEventListener('click', async (e) => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    b.classList.add('busy');
+    const res = engine.equipItem(activeSlot, b.dataset.item || null);
+    if (!res.ok && res.error) console.warn('[DC] equip', res.error);
+    await persistOutfit(engine);
+    b.classList.remove('busy');
+    renderItems();
+  });
+  renderItems();
+}
+
 // ---------- renderer 3D ----------
 function build3dUi(engine, settings) {
   const { anim, camera, hair, render } = engine;
   buildFaceUi(engine);
+  buildWardrobeUi(engine);
 
   const clips = $('#clips');
   for (const c of anim.list()) clips.appendChild(button(c.name, { 'data-clip': c.id, title: c.loop ? 'Stato di fondo' : 'Gesto' }));

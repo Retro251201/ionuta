@@ -59,6 +59,22 @@ Indici generati: `assets/avatar/base.json`, `assets/hair/index.json`, `assets/fa
 degli occhi): il personaggio di Desktop Companion è un personaggio **adulto** originale e non riprende nomi, identità o
 schede dei personaggi di esempio di pixiv.
 
+### 2-bis. Corpo base adulto (concessione d'uso libera, non CC0)
+
+Il corpo base predefinito del motore 3D è un **modello di esempio VRoid Studio 1.x** ripubblicato da **hinzka**
+nel repository *52blendshapes-for-VRoid-face* (con 52 blendshape facciali "Perfect Sync"). Non è CC0, ma il README
+del repository concede **uso personale e commerciale, modifica, redistribuzione e vendita, senza attribuzione**.
+
+- Fonte e termini: <https://github.com/hinzka/52blendshapes-for-VRoid-face> (chiave `VRoid_V110_Female_v1.1.3` in
+  `tools/pipeline/provenance.mjs`, usata dall'audit e dai test).
+- Nota: i metadati VRM del file ereditano l'impostazione predefinita di VRoid Studio (`licenseName` restrittivo);
+  la concessione reale è quella del README, registrata qui e in `provenance.mjs`.
+
+| File nel pacchetto | Sorgente | Cosa è stato tenuto | Modifiche della pipeline |
+|---|---|---|---|
+| `avatar/female.vrm` | VRoid_V110_Female_v1.1.3 | corpo + viso (54 ossa, 124 morph del viso, 70 espressioni) e fisica spring del seno | rimossi vestiti e capelli; primitive fuse; texture WebP ≤ 2048 px; miniatura rimossa (`tools/pipeline/build-female.mjs`) |
+| `hair/vroid_long.vrm` | VRoid_V110_Female_v1.1.3 | sola acconciatura originale (mesh + ossa e spring bone) | primitive fuse, texture WebP ≤ 1024 px |
+
 ## 3. Contenuti generati dal progetto (nessun asset esterno)
 
 | Contenuto | Come nasce | Licenza |
