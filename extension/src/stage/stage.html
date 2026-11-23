@@ -3,60 +3,75 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Desktop Companion – Anteprima 3D</title>
+  <title>Desktop Companion – Studio</title>
   <link rel="stylesheet" href="stage.css">
 </head>
-<body data-mode="loading">
+<body data-mode="loading" data-cat="model">
   <div class="backdrop" aria-hidden="true"></div>
   <div id="view" class="view" aria-label="Personaggio 3D"></div>
 
-  <header class="bar">
-    <div class="brand"><span class="mon" aria-hidden="true"></span><div><b>Desktop Companion</b><small>Anteprima 3D</small></div></div>
+  <header class="topbar">
+    <div class="brand"><span class="mon" aria-hidden="true"></span><b>Desktop Companion</b><small>Studio</small></div>
     <div class="badge" id="badge">Caricamento…</div>
   </header>
 
   <div class="loading" id="loading"><div class="spinner" aria-hidden="true"></div><span>Preparo il personaggio…</span></div>
 
-  <nav class="rail" id="frames" aria-label="Inquadratura"></nav>
+  <!-- barra categorie, stile character maker -->
+  <aside class="catbar" id="catbar" aria-label="Categorie">
+    <button data-cat="model" class="on"><span>🧍</span>Modello</button>
+    <button data-cat="face"><span>🙂</span>Volto</button>
+    <button data-cat="hair" id="catHair"><span>💇‍♀️</span>Capelli</button>
+    <button data-cat="wardrobe" id="catWardrobe"><span>👗</span>Vestiti</button>
+    <button data-cat="pose"><span>🎬</span>Pose</button>
+    <button data-cat="light"><span>💡</span>Luce</button>
+    <button data-cat="quality"><span>⚙️</span>Resa</button>
+  </aside>
 
-  <section class="dock" id="dock" hidden>
-    <div class="row">
-      <h2>Animazione</h2>
-      <div class="chips" id="clips"></div>
-    </div>
-    <div class="row">
+  <!-- pannello contestuale della categoria scelta -->
+  <section class="panel" id="panel" aria-label="Controlli">
+    <div class="pane" data-pane="model">
       <h2>Modello</h2>
-      <div class="chips scroll" id="models"></div>
+      <p class="sub">Scegli la ragazza. "Corpo personalizzabile" ha guardaroba e capelli.</p>
+      <div class="grid" id="models"></div>
     </div>
-    <div class="row" id="rowLooks">
-      <h2>Look</h2>
-      <div class="chips scroll" id="looks"></div>
-    </div>
-    <div class="row" id="rowWardrobe">
-      <h2>Guardaroba</h2>
-      <div class="chips" id="wslots"></div>
-      <div class="chips scroll" id="witems"></div>
-    </div>
-    <div class="row">
+    <div class="pane" data-pane="face">
       <h2>Volto</h2>
-      <div class="chips scroll faces" id="faces"></div>
+      <p class="sub">Il tuo volto fotografico, oppure il viso 3D anime.</p>
+      <div class="grid faces" id="faces"></div>
     </div>
-    <div class="row" id="rowHair" hidden>
+    <div class="pane" data-pane="hair" id="rowHair">
       <h2>Capelli</h2>
-      <div class="chips scroll" id="hair"></div>
+      <div class="grid" id="hair"></div>
     </div>
-    <div class="row">
-      <h2>Luce</h2>
-      <div class="chips scroll" id="lights"></div>
+    <div class="pane" data-pane="wardrobe">
+      <div id="rowLooks">
+        <h2>Look pronti</h2>
+        <div class="grid" id="looks"></div>
+      </div>
+      <div id="rowWardrobe">
+        <h2>Guardaroba</h2>
+        <div class="seg wrap" id="wslots"></div>
+        <div class="grid" id="witems"></div>
+      </div>
     </div>
-    <div class="row">
-      <h2>Qualità</h2>
+    <div class="pane" data-pane="pose">
+      <h2>Pose e animazioni</h2>
+      <div class="grid" id="clips"></div>
+    </div>
+    <div class="pane" data-pane="light">
+      <h2>Illuminazione</h2>
+      <div class="grid" id="lights"></div>
+    </div>
+    <div class="pane" data-pane="quality">
+      <h2>Resa grafica</h2>
       <div class="seg" id="quality"></div>
       <div class="stats" id="stats" title="Numeri reali del renderer"></div>
     </div>
-    <p class="note" id="note" hidden></p>
-    <p class="hint">Trascina per ruotare · rotellina per lo zoom</p>
   </section>
+
+  <!-- inquadrature (camera) -->
+  <nav class="rail" id="frames" aria-label="Inquadratura"></nav>
 
   <section class="fallback" id="fallback" hidden>
     <div class="fallback-card">

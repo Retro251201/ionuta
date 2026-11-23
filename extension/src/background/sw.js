@@ -305,7 +305,7 @@ chrome.windows.onRemoved.addListener(async (id) => {
 async function openStage() {
   const r = await chrome.storage.session.get('dc_stageWinId');
   if (r.dc_stageWinId) { try { await chrome.windows.update(r.dc_stageWinId, { focused: true }); return; } catch (e) {} }
-  const w = await chrome.windows.create({ url: chrome.runtime.getURL('src/stage/stage.html'), type: 'popup', width: 560, height: 820 });
+  const w = await chrome.windows.create({ url: chrome.runtime.getURL('src/stage/stage.html'), type: 'popup', width: 1180, height: 840 });
   await chrome.storage.session.set({ dc_stageWinId: w.id });
 }
 // Definizione del personaggio 3D in un backup importato: qui solo forma e dimensione, la normalizzazione completa

@@ -137,6 +137,8 @@ function buildModelsUi(engine) {
   $('#rowLooks').hidden = full;
   $('#rowWardrobe').hidden = full;
   $('#rowHair').hidden = full || !engine.hair;
+  $('#catWardrobe').hidden = full;
+  $('#catHair').hidden = full || !engine.hair;
 }
 
 // ---------- renderer 3D ----------
@@ -154,7 +156,7 @@ function build3dUi(engine, settings) {
 
   const frames = $('#frames');
   for (const f of camera.list()) { const b = button('', { 'data-frame': f.id, title: f.name, 'aria-label': f.name }); b.innerHTML = FRAME_ICONS[f.id] || ''; frames.appendChild(b); }
-  frames.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) camera.frame(b.dataset.frame, { lift: engine.wardrobe.groundOffset }); });
+  frames.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) camera.frame(b.dataset.frame, { lift: engine.groundOffsetValue() }); });
   const showFrame = (name) => { mark(frames, name, 'data-frame'); document.body.dataset.frame = name || 'free'; };
   camera.on('frame', ({ name }) => showFrame(name));
   showFrame(camera.frameName);
@@ -207,15 +209,9 @@ function build3dUi(engine, settings) {
   };
   tick(); setInterval(tick, 1000);
 
-  const dock = $('#dock');
-  dock.hidden = false;
-  // il personaggio resta sopra il pannello dei comandi: l'area 3D finisce dove inizia il pannello
-  const fit = () => document.documentElement.style.setProperty('--dock', Math.round(innerHeight - dock.getBoundingClientRect().top) + 'px');
-  new ResizeObserver(fit).observe(dock);
-  addEventListener('resize', fit);
-  fit();
-  const active = hairBox.querySelector('button.on');
-  if (active) hairBox.scrollLeft = Math.max(0, active.offsetLeft - hairBox.offsetLeft - 12); // acconciatura attiva in vista
+  // barra categorie: mostra il pannello della categoria scelta
+  const catbar = $('#catbar');
+  catbar.addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; document.body.dataset.cat = b.dataset.cat; mark(catbar, b.dataset.cat, 'data-cat'); });
   $('#badge').textContent = 'Renderer 3D · WebGL 2';
   render.on('contextlost', () => { $('#badge').textContent = 'Contesto grafico perso…'; });
   render.on('contextrestored', () => { $('#badge').textContent = 'Renderer 3D · WebGL 2'; });
