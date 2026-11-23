@@ -59,10 +59,9 @@
   </section>
 
   <section class="fallback" id="fallback" hidden>
-    <div class="svg-host" id="svgHost"></div>
     <div class="fallback-card">
-      <b>Renderer SVG attivo</b>
-      <p>Il renderer 3D non è disponibile su questo dispositivo, quindi il companion usa il personaggio classico. Tutte le altre funzioni restano attive.</p>
+      <b>WebGL non disponibile</b>
+      <p>Il companion 3D richiede WebGL 2. Abilita l'accelerazione hardware nel browser per vedere il personaggio.</p>
       <p class="reason" id="fallbackReason"></p>
     </div>
   </section>
@@ -70,7 +69,6 @@
   <script src="../shared/heads.generated.js"></script>
   <script src="../shared/skins.js"></script>
   <script src="../shared/data.js"></script>
-  <script src="../engine/body.js"></script>
   <script type="module" src="stage.js"></script>
 </body>
 </html>

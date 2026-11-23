@@ -221,26 +221,11 @@ function build3dUi(engine, settings) {
   render.on('contextrestored', () => { $('#badge').textContent = 'Renderer 3D · WebGL 2'; });
 }
 
-// ---------- fallback SVG ----------
+// ---------- messaggio se manca WebGL (niente più renderer 2D) ----------
 function showFallback(settings, reason) {
-  const body = new DC.Body();
-  $('#svgHost').appendChild(body.svg);
-  const head = DC.headById(settings.headId);
-  body.look = { hair: settings.hairStyle || 'long', hairColor: settings.hairColor || '#3a2a33', accessory: settings.accessory || 'none' };
-  body.outfit = DC.outfitById(settings.outfitId);
-  body.setHead(head, inExtension ? DC.headUrl(head) : head.dataUrl || '../../' + head.file);
-  const animate = (t) => {
-    const s = t / 1000, p = DC.Body.restPose();
-    p.sqy = 1 + 0.012 * Math.sin(s * 2.2); p.sqx = 1 - 0.006 * Math.sin(s * 2.2);
-    p.headTilt = 2.5 * Math.sin(s * 0.9); p.aR = [-10 - 4 * Math.sin(s * 1.3), 6]; p.aL = [10 + 3 * Math.sin(s * 1.1), -6];
-    p.skirt = 1.5 * Math.sin(s * 1.7);
-    body.setPose(p);
-    requestAnimationFrame(animate);
-  };
-  requestAnimationFrame(animate);
   $('#fallbackReason').textContent = reason ? 'Motivo: ' + reason : '';
   $('#fallback').hidden = false;
-  $('#badge').textContent = 'Renderer SVG (fallback)';
+  $('#badge').textContent = 'WebGL non disponibile';
 }
 
 async function boot() {

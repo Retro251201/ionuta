@@ -25,7 +25,9 @@ function check(name, ok, detail = '') {
 }
 
 /** Messaggi di console/errore da ignorare (rumore del browser headless, non del prodotto). */
-const NOISE = [/GPU stall due to ReadPixels/i, /Automatic fallback to software WebGL/i, /GroupMarkerNotSet/i, /Failed to load resource/i];
+const NOISE = [/GPU stall due to ReadPixels/i, /Automatic fallback to software WebGL/i, /GroupMarkerNotSet/i, /Failed to load resource/i,
+  // anteprime 3D in iframe chiuse mentre caricano ancora (popup transitorio): cancellazione, non un difetto del prodotto
+  /Couldn't load texture blob:/i, /THREE.GLTFLoader: Couldn't load/i];
 
 async function launch() {
   const prof = fs.mkdtempSync(path.join(os.tmpdir(), 'dcprof-'));
@@ -39,7 +41,7 @@ async function launch() {
     p.on('pageerror', (e) => errors.push(`[pageerror ${p.url()}] ${e.message}`));
     p.on('console', (m) => { if (m.type() === 'error' && !NOISE.some((re) => re.test(m.text()))) errors.push(`[console.error ${p.url()}] ${m.text()}`); });
     // le risorse mancanti sono riportate con l'URL esatto (il favicon del server di prova non fa parte del prodotto)
-    p.on('requestfailed', (r) => { if (!/favicon\.ico/.test(r.url())) errors.push(`[requestfailed] ${r.url()}`); });
+    p.on('requestfailed', (r) => { const ab = (r.failure() && r.failure().errorText) || ''; if (!/favicon\.ico/.test(r.url()) && !/ERR_ABORTED/.test(ab)) errors.push(`[requestfailed] ${r.url()} (${ab})`); });
     p.on('response', (r) => { if (r.status() >= 400 && !/favicon\.ico/.test(r.url())) errors.push(`[http ${r.status()}] ${r.url()}`); });
   };
   ctx.pages().forEach(watch);
@@ -61,7 +63,7 @@ async function legacy(env, srv) {
   const page = await ctx.newPage();
   await page.goto(srv.url + '/tools/qa/test.html');
   await sleep(4500);
-  check('content script: companion presente nella pagina', await page.evaluate(() => !!document.querySelector('dc-companion-root')));
+  check('content script: companion 3D (iframe) iniettato nella pagina', await page.evaluate(() => { const h = document.querySelector('#dc-companion-root'); const f = h && h.querySelector('iframe'); return !!(f && /src\/companion\/companion\.html/.test(f.src)); }));
   await page.screenshot({ path: `${OUT}/01_page.png` });
 
   // popup + messaggi verso il service worker
@@ -113,7 +115,7 @@ async function legacy(env, srv) {
 
   await pop.reload(); await sleep(1200);
   await pop.screenshot({ path: `${OUT}/03_popup_home.png` });
-  check('popup: anteprima SVG del personaggio', await pop.evaluate(() => !!document.querySelector('#preview svg')));
+  check('popup: anteprima 3D del personaggio (iframe companion)', await pop.evaluate(() => { const f = document.querySelector('#preview iframe'); return !!(f && /companion\.html/.test(f.src)); }));
   for (const t of ['shop', 'style', 'focus', 'goals', 'game', 'account']) {
     await pop.click(`#tabs button[data-tab="${t}"]`); await sleep(350);
     if (t === 'game') { await pop.click('.rps-b[data-m="rock"]'); await sleep(350); }
@@ -138,8 +140,8 @@ async function legacy(env, srv) {
   await win.waitForFunction(() => window.__dcWindow && window.__dcWindow.mode && window.__dcWindow.mode !== 'loading', null, { timeout: 150000 });
   await sleep(1500);
   await win.screenshot({ path: `${OUT}/07_window.png` });
-  const winState = await win.evaluate(() => ({ mode: window.__dcWindow.mode, canvas: !!document.querySelector('#view canvas'), svg: !!document.querySelector('#svgHost svg'), clips: window.__dcWindow.engine ? window.__dcWindow.engine.anim.list().length : 0 }));
-  check('finestra desktop: personaggio 3D nel renderer WebGL (o fallback SVG)', (winState.mode === '3d' && winState.canvas && winState.clips >= 8) || (winState.mode === 'svg' && winState.svg), `modo ${winState.mode}, ${winState.clips} clip`);
+  const winState = await win.evaluate(() => ({ mode: window.__dcWindow.mode, canvas: !!document.querySelector('#view canvas'), clips: window.__dcWindow.engine ? window.__dcWindow.engine.anim.list().length : 0 }));
+  check('finestra desktop: personaggio 3D nel renderer WebGL', winState.mode === '3d' && winState.canvas && winState.clips >= 8, `modo ${winState.mode}, ${winState.clips} clip`);
 
   // outfit / testa / sonno riflessi nella pagina
   await pop.evaluate(async () => { await DC.saveSettings({ headId: 'head_01', outfitId: 'maid' }); await DC.send({ type: 'action', action: 'sleep', value: true }); });
@@ -417,7 +419,7 @@ async function stage(env) {
   await page.waitForFunction(() => window.__dcStage.engine.headMode === '3d' && window.__dcStage.def.head.mode === '3d', null, { timeout: 60000 });
   const face3d = await page.evaluate(async () => { const e = window.__dcStage.engine; return { visible: e.avatar.face.skin.visible, cut: e.hair.hiddenTriangles, saved: (await chrome.storage.local.get('dc_avatar')).dc_avatar.head.mode }; });
   await page.click('#faces [data-face="head_02"]');
-  await page.waitForFunction(() => window.__dcStage.engine.photoHead.id === 'head_02', null, { timeout: 60000 });
+  await page.waitForFunction(async () => window.__dcStage.engine.photoHead.id === 'head_02' && ((await chrome.storage.local.get('dc_settings')).dc_settings || {}).headId === 'head_02', null, { timeout: 60000 });
   const face2 = await page.evaluate(async () => { const e = window.__dcStage.engine, st = await chrome.storage.local.get(['dc_avatar', 'dc_settings']); return { src: e.photoHead.identity().textureSrc, saved: st.dc_avatar.head, headId: st.dc_settings.headId, skin: e.avatar.skinTone }; });
   // guardaroba dall'interfaccia: un look preimpostato e un singolo capo, applicati e salvati
   await page.click('#looks [data-look="date_night"]');
@@ -528,13 +530,13 @@ async function stage(env) {
   await fb.waitForFunction(READY, null, { timeout: 60000 });
   await sleep(600);
   const fall = await fb.evaluate(() => {
-    const s = window.__dcStage, svg = document.querySelector('#svgHost svg'), img = svg && svg.querySelector('image');
-    return { mode: s.mode, error: s.error, svg: !!svg, head: img ? (img.getAttribute('href') || img.getAttribute('xlink:href') || '') : '', canvas: !!document.querySelector('#view canvas'),
+    const s = window.__dcStage;
+    return { mode: s.mode, error: s.error, canvas: !!document.querySelector('#view canvas'),
       dockHidden: document.querySelector('#dock').hidden, cardShown: !document.querySelector('#fallback').hidden, badge: document.querySelector('#badge').textContent };
   });
-  check('fallback: senza WebGL compare il personaggio SVG con la testa fotografica originale', fall.mode === 'svg' && fall.svg && /assets\/heads\/head_0\d\.png$/.test(fall.head) && !fall.canvas, fall.error);
-  check('fallback: comandi 3D nascosti e avviso mostrato', fall.dockHidden && fall.cardShown && /SVG/.test(fall.badge), fall.badge);
-  await fb.screenshot({ path: `${OUT}/33_stage_fallback_svg.png` });
+  check('senza WebGL: nessun crash, avviso mostrato e niente canvas 3D', fall.mode === 'svg' && !fall.canvas && fall.cardShown && /WebGL/.test(fall.badge), fall.error || fall.badge);
+  check('senza WebGL: comandi 3D nascosti', fall.dockHidden);
+  await fb.screenshot({ path: `${OUT}/33_stage_no_webgl.png` });
   await fb.close();
 
   check('console pulita nel motore 3D (nessun errore JS, CSP o risorsa mancante)', errors.length === 0, errors.slice(0, 6).join(' || '));

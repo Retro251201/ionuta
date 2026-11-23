@@ -33,23 +33,6 @@ async function loadSettings() {
   return DC.clone(DC.DEFAULT_SETTINGS);
 }
 
-function startSvgFallback(settings) {
-  document.body.dataset.mode = 'svg';
-  const body = new DC.Body();
-  $('#svgHost').appendChild(body.svg);
-  const head = DC.headById(settings.headId);
-  body.look = { hair: settings.hairStyle || 'long', hairColor: settings.hairColor || '#3a2a33', accessory: settings.accessory || 'none' };
-  body.outfit = DC.outfitById(settings.outfitId);
-  body.setHead(head, inExtension ? DC.headUrl(head) : (head.dataUrl || '../../' + head.file));
-  const animate = (t) => {
-    const s = t / 1000, p = DC.Body.restPose();
-    p.sqy = 1 + 0.012 * Math.sin(s * 2.2); p.headTilt = 2.5 * Math.sin(s * 0.9);
-    p.aR = [-10 - 4 * Math.sin(s * 1.3), 6]; p.aL = [10 + 3 * Math.sin(s * 1.1), -6];
-    body.setPose(p); requestAnimationFrame(animate);
-  };
-  requestAnimationFrame(animate);
-}
-
 async function boot() {
   const settings = await loadSettings();
   const { def } = await loadCharacter();
@@ -77,12 +60,12 @@ async function boot() {
       DC.load().then(({ settings: s }) => { document.title = (s.name || 'Companion') + ' – Desktop Companion'; });
     }
   } catch (e) {
-    console.warn('[DC] finestra: renderer 3D non disponibile, uso il companion classico', e);
+    console.warn('[DC] finestra: renderer 3D non disponibile', e);
     if (engine) { try { engine.dispose(); } catch (_) {} }
     $('#view').replaceChildren();
-    window.__dcWindow = { engine: null, mode: 'svg', error: String((e && e.message) || e) };
-    startSvgFallback(settings);
+    window.__dcWindow = { engine: null, mode: 'error', error: String((e && e.message) || e) };
+    document.body.dataset.mode = 'error';
   }
 }
 
-boot().catch((e) => { console.error('[DC] avvio finestra', e); try { loadSettings().then(startSvgFallback); } catch (_) {} });
+boot().catch((e) => { console.error('[DC] avvio finestra', e); document.body.dataset.mode = 'error'; });

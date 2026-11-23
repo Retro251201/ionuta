@@ -12,14 +12,13 @@
     .clock { position: absolute; right: 14px; top: 10px; font-weight: 700; color: #e8def7; font-size: 18px; font-variant-numeric: tabular-nums; z-index: 3; text-shadow: 0 1px 4px #0009; }
     .bubble { position: absolute; left: 50%; top: 14%; transform: translateX(-50%); max-width: 70%; padding: 8px 13px; background: #fff; color: #2b2b3a; border: 2px solid #ffb3d4; border-radius: 15px; font-size: 13px; line-height: 1.35; box-shadow: 0 6px 18px #0004; opacity: 0; transition: opacity .25s, transform .25s; z-index: 4; pointer-events: none; }
     .bubble.show { opacity: 1; }
-    .svg-host { position: absolute; inset: 0; display: none; align-items: flex-end; justify-content: center; }
-    .svg-host svg { width: 100%; height: 92%; }
-    body[data-mode="svg"] .svg-host { display: flex; }
+    .msg { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; text-align: center; color: #cfc6e6; padding: 24px; z-index: 3; }
+    body[data-mode="error"] .msg { display: flex; }
   </style>
 </head>
 <body data-mode="loading">
   <div id="view"></div>
-  <div class="svg-host" id="svgHost"></div>
+  <div class="msg">Il companion 3D richiede WebGL 2. Abilitalo nel browser per vederlo.</div>
   <div class="floor"></div>
   <div class="hint" id="hint">Trascina per ruotare • clic per una reazione • tasto destro per il menu</div>
   <div class="clock" id="clock"></div>
@@ -27,7 +26,6 @@
   <script src="../shared/heads.generated.js"></script>
   <script src="../shared/skins.js"></script>
   <script src="../shared/data.js"></script>
-  <script src="../engine/body.js"></script>
   <script type="module" src="window.js"></script>
 </body>
 </html>
