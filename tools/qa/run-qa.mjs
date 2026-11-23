@@ -63,7 +63,12 @@ async function legacy(env, srv) {
   const page = await ctx.newPage();
   await page.goto(srv.url + '/tools/qa/test.html');
   await sleep(4500);
-  check('content script: companion 3D (iframe) iniettato nella pagina', await page.evaluate(() => { const h = document.querySelector('#dc-companion-root'); const f = h && h.querySelector('iframe'); return !!(f && /src\/companion\/companion\.html/.test(f.src)); }));
+  check('content script: companion 3D galleggiante e trascinabile (non una finestra)', await page.evaluate(() => {
+    const h = document.querySelector('#dc-companion-root'); const f = h && h.querySelector('iframe');
+    const st = h && getComputedStyle(h);
+    return !!(f && /companion\.html\?embed=1/.test(f.src) && st.position === 'fixed' && st.pointerEvents === 'none' && /matrix|translate/.test(st.transform));
+  }));
+
   await page.screenshot({ path: `${OUT}/01_page.png` });
 
   // popup + messaggi verso il service worker

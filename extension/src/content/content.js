@@ -7,16 +7,27 @@
   window.__dcCompanionLoaded = true;
   if (!/^https?:|^file:/.test(location.protocol)) return;
 
-  const W = 300, H = 480;
+  const W = 260, H = 420;
   const host = document.createElement('div');
   host.id = 'dc-companion-root';
-  host.style.cssText = `position:fixed;right:18px;bottom:0;width:${W}px;height:${H}px;z-index:2147483646;pointer-events:none;`;
+  // overlay trasparente e libero (non una finestra): posizionato con left/top e trascinabile
+  host.style.cssText = `position:fixed;left:0;top:0;width:${W}px;height:${H}px;z-index:2147483646;pointer-events:none;will-change:transform;`;
   const frame = document.createElement('iframe');
   frame.title = 'Desktop Companion';
   frame.setAttribute('allowtransparency', 'true');
   frame.style.cssText = 'width:100%;height:100%;border:0;background:transparent;pointer-events:auto;';
-  try { frame.src = chrome.runtime.getURL('src/companion/companion.html'); } catch (e) { return; }
+  try { frame.src = chrome.runtime.getURL('src/companion/companion.html?embed=1&q=low'); } catch (e) { return; }
   host.appendChild(frame);
+
+  // posizione (persistita per sito); parte in basso a destra
+  let pos = { x: Math.max(8, window.innerWidth - W - 18), y: Math.max(8, window.innerHeight - H) };
+  const KEY = 'dc_pos';
+  try { const saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved && typeof saved.x === 'number') pos = saved; } catch (e) {}
+  const clamp = () => { pos.x = Math.min(Math.max(8 - W * 0.4, pos.x), window.innerWidth - W * 0.6); pos.y = Math.min(Math.max(8, pos.y), window.innerHeight - H * 0.55); };
+  const place = () => { clamp(); host.style.transform = `translate(${pos.x}px, ${pos.y}px)`; };
+  const savePos = () => { try { localStorage.setItem(KEY, JSON.stringify(pos)); } catch (e) {} };
+  place();
+  window.addEventListener('resize', place);
 
   function mount() {
     if (!document.body) { document.addEventListener('DOMContentLoaded', mount, { once: true }); return; }
@@ -26,6 +37,14 @@
 
   let hidden = false;
   const setHidden = (v) => { hidden = v; host.style.display = hidden ? 'none' : 'block'; };
+
+  // trascinamento: la pagina companion (iframe) cattura il puntatore e invia gli spostamenti qui
+  window.addEventListener('message', (e) => {
+    const m = e.data;
+    if (!m || e.source !== frame.contentWindow) return;
+    if (m.type === 'dc-drag-move') { pos.x += m.dx; pos.y += m.dy; place(); }
+    else if (m.type === 'dc-drag-end') savePos();
+  });
 
   // visibilità legata all'impostazione `enabled` (scorciatoia Alt+Shift+C → toggle nel service worker)
   try {

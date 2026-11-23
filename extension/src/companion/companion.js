@@ -28,11 +28,13 @@ const state = (window.__dcCompanion = { ready: false, mode: 'loading', engine: n
 
 async function boot() {
   const { def } = await loadCharacter();
-  const interactive = params.get('static') !== '1';
+  const embed = params.get('embed') === '1';      // overlay trascinabile nelle pagine
+  const stat = params.get('static') === '1';       // anteprima statica (popup)
   const quality = params.get('q') || 'medium';
   let engine = null;
   try {
-    engine = new CharacterEngine($('#view'), { quality, transparent: true, autoPause: true, interactive, resolveHead });
+    // nelle pagine l'orbita con il mouse è disattivata: il trascinamento sposta il personaggio
+    engine = new CharacterEngine($('#view'), { quality, transparent: true, autoPause: true, interactive: !embed && !stat, resolveHead });
     await engine.load(def);
     state.engine = engine; state.mode = '3d';
     document.body.dataset.mode = '3d';
@@ -40,7 +42,36 @@ async function boot() {
 
     const gestures = engine.anim.list().filter((c) => !c.loop).map((c) => c.id);
     const playRandom = () => { if (gestures.length) engine.anim.play(gestures[Math.floor(Math.random() * gestures.length)]); };
-    if (params.get('static') !== '1') {
+
+    if (embed) {
+      // trascinamento: cattura il puntatore e invia gli spostamenti alla pagina ospite; un tocco senza
+      // spostamento è una reazione. La pagina companion non ha pannelli: è solo il personaggio.
+      const cv = engine.render.canvas;
+      let drag = null, moved = false;
+      cv.style.cursor = 'grab';
+      cv.addEventListener('pointerdown', (e) => {
+        if (e.button !== 0) return;
+        drag = { id: e.pointerId }; moved = false;
+        try { cv.setPointerCapture(e.pointerId); } catch (_) {}
+        cv.style.cursor = 'grabbing';
+        parent.postMessage({ type: 'dc-drag-start' }, '*');
+      });
+      cv.addEventListener('pointermove', (e) => {
+        if (!drag) return;
+        if (Math.abs(e.movementX) + Math.abs(e.movementY) > 0) moved = true;
+        parent.postMessage({ type: 'dc-drag-move', dx: e.movementX, dy: e.movementY }, '*');
+      });
+      const endDrag = (e) => {
+        if (!drag) return;
+        try { cv.releasePointerCapture(drag.id); } catch (_) {}
+        drag = null; cv.style.cursor = 'grab';
+        parent.postMessage({ type: 'dc-drag-end' }, '*');
+        if (!moved) { playRandom(); if (DC.line) say(DC.line('idle')); } // tocco senza trascinamento = reazione
+      };
+      cv.addEventListener('pointerup', endDrag);
+      cv.addEventListener('pointercancel', endDrag);
+      setInterval(() => { if (!document.hidden) playRandom(); }, 15000);
+    } else if (!stat) {
       engine.render.canvas.addEventListener('pointerdown', (e) => { if (e.button === 0) { playRandom(); if (DC.line) say(DC.line('idle')); } });
       setInterval(() => { if (!document.hidden) playRandom(); }, 15000);
     }
