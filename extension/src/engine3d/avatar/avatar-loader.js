@@ -2,9 +2,11 @@
 // le parti in modo strutturato agli altri moduli (corpo, parti del viso, ossa, dati di bind per la Garment Forge).
 import { THREE, VRM } from '../lib.js';
 
-export const BASE_AVATAR = 'avatar/base.vrm';
+export const BASE_AVATAR = 'avatar/female.vrm';
+/** Misure della testa del modello base (adattamento dei capelli). */
+export const BASE_FIT = 'avatar/female.json';
 /** Tono medio della texture della pelle del modello base: la carnagione si esprime rispetto a questo colore. */
-export const SKIN_REFERENCE = '#f6d3c0';
+export const SKIN_REFERENCE = '#e8cdbd';
 
 const FACE_PARTS = [
   ['mouth', /FaceMouth/], ['eyeWhite', /EyeWhite/], ['eyeline', /FaceEyeline/], ['eyelash', /FaceEyelash/],

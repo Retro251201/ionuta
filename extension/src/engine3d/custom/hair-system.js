@@ -5,6 +5,7 @@
 import { THREE } from '../lib.js';
 import { Emitter } from '../core/events.js';
 import { AssetManager } from '../assets/asset-manager.js';
+import { BASE_FIT } from '../avatar/avatar-loader.js';
 
 export class HairSystem extends Emitter {
   /** @param {{avatar: import('../avatar/avatar-loader.js').Avatar, assets: AssetManager}} opts */
@@ -20,7 +21,7 @@ export class HairSystem extends Emitter {
   }
 
   async init() {
-    const [index, base] = await Promise.all([this.assets.json('hair/index.json'), this.assets.json('avatar/base.json')]);
+    const [index, base] = await Promise.all([this.assets.json('hair/index.json'), this.assets.json(BASE_FIT)]);
     this.index = index;
     this.baseFit = base.fit;
     return this;

@@ -4,6 +4,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { FREE_USE, FREE_USE_FILES } from './provenance.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 export const ASSET_ROOT = path.join(root, 'extension/assets');
@@ -33,12 +34,16 @@ export function auditModels() {
     const v0 = ext.VRM, v1 = ext.VRMC_vrm;
     const m = (v0 && v0.meta) || (v1 && v1.meta) || {};
     const license = v0 ? m.licenseName : m.licenseUrl;
+    const rel = path.relative(ASSET_ROOT, file).replace(/\\/g, '/');
+    const free = FREE_USE_FILES[rel] ? FREE_USE[FREE_USE_FILES[rel]] : null;
     return {
-      file: path.relative(ASSET_ROOT, file).replace(/\\/g, '/'), bytes: fs.statSync(file).size,
+      file: rel, bytes: fs.statSync(file).size,
       vrm: v0 ? '0.x' : v1 ? '1.0' : null, title: m.title || m.name || '', author: m.author || (m.authors || []).join(', ') || '',
-      license: license || '', commercial: m.commercialUssageName || m.commercialUsage || '', sexual: m.sexualUssageName || '', violent: m.violentUssageName || '',
+      license: free ? free.license : (license || ''), embeddedLicense: license || '',
+      commercial: m.commercialUssageName || m.commercialUsage || '', sexual: m.sexualUssageName || '', violent: m.violentUssageName || '',
       allowedUser: m.allowedUserName || m.avatarPermission || '',
-      ok: ACCEPTED_LICENSES.includes(license)
+      provenance: free ? free.url : null,
+      ok: ACCEPTED_LICENSES.includes(license) || !!free
     };
   });
 }

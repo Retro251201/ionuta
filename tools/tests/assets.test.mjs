@@ -5,14 +5,19 @@ import assert from 'node:assert/strict';
 import { read, readJson, exists, walk } from './helpers.mjs';
 import { auditModels, ACCEPTED_LICENSES } from '../pipeline/audit-licenses.mjs';
 import { MODELS } from '../pipeline/sources.mjs';
+import { FREE_USE, FREE_USE_SOURCES } from '../pipeline/provenance.mjs';
+
+const knownSource = (s) => !!MODELS[s] || FREE_USE_SOURCES.has(s);
 
 const models = auditModels();
 
 test('licenze: ogni modello distribuito dichiara nei propri metadati una licenza ammessa', () => {
   assert.ok(models.length >= 10);
   for (const m of models) {
-    assert.ok(ACCEPTED_LICENSES.includes(m.license), `${m.file}: licenza "${m.license}" non ammessa`);
-    assert.equal(m.commercial, 'Allow', m.file + ': uso commerciale non consentito');
+    // ammessi: licenza CC0 nei metadati, oppure concessione d'uso libera documentata (provenance.mjs)
+    assert.ok(m.ok, `${m.file}: licenza "${m.embedddedLicense || m.license}" non ammessa né documentata`);
+    if (ACCEPTED_LICENSES.includes(m.embeddedLicense)) assert.equal(m.commercial, 'Allow', m.file + ': uso commerciale non consentito');
+    else assert.ok(m.provenance, m.file + ': concessione d\'uso senza URL di provenienza');
   }
 });
 
@@ -32,8 +37,8 @@ test('capelli: indice coerente con i file e con le fonti dichiarate', () => {
   assert.equal(new Set(index.map((h) => h.id)).size, index.length);
   for (const h of index) {
     assert.ok(exists('extension/assets/' + h.file), h.file);
-    assert.ok(MODELS[h.source], 'fonte non dichiarata: ' + h.source);
-    assert.equal(h.license, 'CC0-1.0');
+    assert.ok(knownSource(h.source), 'fonte non dichiarata: ' + h.source);
+    assert.ok(h.license === 'CC0-1.0' || FREE_USE_SOURCES.has(h.source), h.id + ': licenza ' + h.license);
     for (const k of ['w', 'top', 'chin', 'front', 'headY']) assert.equal(typeof h.fit[k], 'number', `${h.id}.fit.${k}`);
     assert.ok(h.tris > 0 && h.tris < 40000, h.id + ': numero di triangoli fuori budget');
   }
@@ -62,6 +67,7 @@ test('avatar base: misure della testa presenti', () => {
 test('registro crediti: docs/ASSET_CREDITS.md cita ogni fonte e ogni libreria distribuita', () => {
   const credits = read('docs/ASSET_CREDITS.md');
   for (const name of Object.keys(MODELS)) assert.ok(credits.includes(name), 'fonte non registrata in ASSET_CREDITS.md: ' + name);
+  for (const name of Object.keys(FREE_USE)) assert.ok(credits.includes(name), 'fonte non registrata in ASSET_CREDITS.md: ' + name);
   for (const lib of ['three.js', '@pixiv/three-vrm']) assert.ok(credits.includes(lib), lib);
   for (const m of models) assert.ok(credits.includes(m.file), 'file non registrato in ASSET_CREDITS.md: ' + m.file);
 });

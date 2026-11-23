@@ -1,5 +1,20 @@
 [
  {
+  "id": "vroid_long",
+  "name": "Lunghi morbidi",
+  "file": "hair/vroid_long.vrm",
+  "source": "VRoid_V110_Female_v1.1.3",
+  "license": "free-use",
+  "fit": {
+   "w": 0.1815,
+   "top": 0.1993,
+   "chin": -0.0341,
+   "front": 0.114,
+   "headY": 1.3862
+  },
+  "tris": 10980
+ },
+ {
   "id": "twintail",
   "name": "Codini alti",
   "file": "hair/twintail.vrm",
