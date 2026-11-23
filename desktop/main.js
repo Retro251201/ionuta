@@ -30,7 +30,7 @@ function createMate() {
   mate.setAlwaysOnTop(true, 'screen-saver');
   mate.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
   mate.setIgnoreMouseEvents(true, { forward: true }); // clic al desktop; i movimenti arrivano comunque al renderer
-  mate.loadURL('app://dc/src/companion/companion.html?desktop=1&embed=1&q=medium');
+  mate.loadURL('app://dc/src/companion/companion.html?desktop=1&embed=1&q=ultra');
   mate.once('ready-to-show', () => mate.showInactive());
   mate.on('moved', savePos);
   mate.on('closed', () => { mate = null; });

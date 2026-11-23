@@ -8,7 +8,7 @@ test('default: versione, modalità testa e outfit iniziale presente nel catalogo
   const d = defaultCharacter();
   assert.equal(d.v, CHARACTER_VERSION);
   assert.equal(d.head.mode, 'photo', 'il volto predefinito è la foto originale');
-  assert.equal(d.head.photoId, 'head_04');
+  assert.equal(d.head.photoId, 'head_02');
   const slots = new Set(SLOTS.map((s) => s.id));
   for (const [slot, e] of Object.entries(d.outfit)) {
     assert.ok(slots.has(slot), 'slot sconosciuto: ' + slot);
