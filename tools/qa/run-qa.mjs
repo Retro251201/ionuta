@@ -135,9 +135,11 @@ async function legacy(env, srv) {
   const win = await ctx.newPage();
   await win.setViewportSize({ width: 460, height: 620 });
   await win.goto(ext('src/window/window.html'));
-  await sleep(4000);
+  await win.waitForFunction(() => window.__dcWindow && window.__dcWindow.mode && window.__dcWindow.mode !== 'loading', null, { timeout: 150000 });
+  await sleep(1500);
   await win.screenshot({ path: `${OUT}/07_window.png` });
-  check('finestra desktop: companion presente', await win.evaluate(() => !!document.querySelector('dc-companion-root')));
+  const winState = await win.evaluate(() => ({ mode: window.__dcWindow.mode, canvas: !!document.querySelector('#view canvas'), svg: !!document.querySelector('#svgHost svg'), clips: window.__dcWindow.engine ? window.__dcWindow.engine.anim.list().length : 0 }));
+  check('finestra desktop: personaggio 3D nel renderer WebGL (o fallback SVG)', (winState.mode === '3d' && winState.canvas && winState.clips >= 8) || (winState.mode === 'svg' && winState.svg), `modo ${winState.mode}, ${winState.clips} clip`);
 
   // outfit / testa / sonno riflessi nella pagina
   await pop.evaluate(async () => { await DC.saveSettings({ headId: 'head_01', outfitId: 'maid' }); await DC.send({ type: 'action', action: 'sleep', value: true }); });

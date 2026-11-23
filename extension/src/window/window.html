@@ -5,30 +5,29 @@
   <title>Desktop Companion</title>
   <style>
     html, body { margin: 0; height: 100%; overflow: hidden; font: 13px system-ui, sans-serif; }
-    body { background: linear-gradient(180deg, #ffe9f2 0%, #fbe3ff 55%, #f3d9ff 100%); }
-    .win { position: absolute; left: 50%; top: 40px; transform: translateX(-50%); width: 150px; height: 110px; border: 6px solid #fff; border-radius: 10px; background: linear-gradient(180deg, #a5d8ff, #e7f5ff); box-shadow: 0 4px 14px #0001; }
-    .win:before, .win:after { content: ""; position: absolute; background: #fff; }
-    .win:before { left: 50%; top: 0; bottom: 0; width: 5px; margin-left: -2px; }
-    .win:after { top: 50%; left: 0; right: 0; height: 5px; margin-top: -2px; }
-    .shelf { position: absolute; right: 24px; top: 190px; width: 90px; height: 6px; background: #c9a27e; border-radius: 3px; }
-    .shelf span { position: absolute; bottom: 6px; font-size: 22px; }
-    .floor { position: absolute; left: 0; right: 0; bottom: 0; height: 30px; background: linear-gradient(180deg, #d8b48f, #c79c74); box-shadow: 0 -2px 0 #b98c62 inset; }
-    .rug { position: absolute; left: 50%; bottom: 8px; width: 60%; height: 16px; transform: translateX(-50%); background: #ff9ec4; border-radius: 50%; opacity: .7; }
-    .hint { position: absolute; left: 10px; right: 10px; top: 8px; text-align: center; color: #8a809e; font-size: 11px; transition: opacity 1s; }
-    .clock { position: absolute; left: 18px; top: 180px; font-weight: 700; color: #6c5a88; font-size: 18px; font-variant-numeric: tabular-nums; }
+    body { background: radial-gradient(120% 80% at 50% 25%, #3a3550 0%, #1b1a2b 60%, #0f0f1a 100%); }
+    #view { position: absolute; inset: 0; }
+    .floor { position: absolute; left: 0; right: 0; bottom: 0; height: 26px; background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.25)); pointer-events: none; }
+    .hint { position: absolute; left: 10px; right: 10px; top: 8px; text-align: center; color: #b9b0cf; font-size: 11px; transition: opacity 1s; pointer-events: none; z-index: 3; text-shadow: 0 1px 3px #0008; }
+    .clock { position: absolute; right: 14px; top: 10px; font-weight: 700; color: #e8def7; font-size: 18px; font-variant-numeric: tabular-nums; z-index: 3; text-shadow: 0 1px 4px #0009; }
+    .bubble { position: absolute; left: 50%; top: 14%; transform: translateX(-50%); max-width: 70%; padding: 8px 13px; background: #fff; color: #2b2b3a; border: 2px solid #ffb3d4; border-radius: 15px; font-size: 13px; line-height: 1.35; box-shadow: 0 6px 18px #0004; opacity: 0; transition: opacity .25s, transform .25s; z-index: 4; pointer-events: none; }
+    .bubble.show { opacity: 1; }
+    .svg-host { position: absolute; inset: 0; display: none; align-items: flex-end; justify-content: center; }
+    .svg-host svg { width: 100%; height: 92%; }
+    body[data-mode="svg"] .svg-host { display: flex; }
   </style>
 </head>
-<body>
-  <div class="hint" id="hint">Lascia questa finestra in un angolo del desktop • tasto destro su di lei per il menu</div>
-  <div class="win"></div>
+<body data-mode="loading">
+  <div id="view"></div>
+  <div class="svg-host" id="svgHost"></div>
+  <div class="floor"></div>
+  <div class="hint" id="hint">Trascina per ruotare • clic per una reazione • tasto destro per il menu</div>
   <div class="clock" id="clock"></div>
-  <div class="shelf"><span style="left:4px">🪴</span><span style="left:36px">📚</span><span style="left:64px">🧸</span></div>
-  <div class="floor"><div class="rug"></div></div>
+  <div class="bubble" id="bubble"></div>
   <script src="../shared/heads.generated.js"></script>
   <script src="../shared/skins.js"></script>
   <script src="../shared/data.js"></script>
   <script src="../engine/body.js"></script>
-  <script src="../engine/companion.js"></script>
-  <script src="window.js"></script>
+  <script type="module" src="window.js"></script>
 </body>
 </html>
