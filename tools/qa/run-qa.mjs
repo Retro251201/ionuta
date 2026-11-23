@@ -262,7 +262,8 @@ async function stage(env) {
     const worn = {};
     for (const [slot, w] of e.wardrobe.worn) worn[slot] = { item: w.item.id, tris: w.garment.stats.tris, skinned: !!(w.garment.mesh && w.garment.mesh.isSkinnedMesh && w.garment.mesh.skeleton === e.avatar.bodyMesh.skeleton) };
     return {
-      mode: s.mode, source: s.source, headMode: s.def.head.mode, noteShown: !document.querySelector('#note').hidden, dockShown: !document.querySelector('#dock').hidden,
+      mode: s.mode, source: s.source, headMode: s.def.head.mode, engineHead: e.headMode, photoId: s.def.head.photoId, ident: e.photoHead.identity(),
+      animeFaceHidden: e.avatar.faceMeshes.every((m) => !m.visible), hairCut: e.hair.hiddenTriangles || 0, onHeadBone: !!(e.photoHead.current && e.photoHead.current.group.parent === e.avatar.bones.head), dockShown: !document.querySelector('#dock').hidden,
       bones: Object.values(e.avatar.bones).filter(Boolean).length, skinned: e.avatar.bodyMesh.isSkinnedMesh, morphs: Object.keys(e.avatar.face.skin.morphTargetDictionary || {}).length,
       expressions: Object.keys(e.avatar.vrm.expressionManager.expressionMap).length, license: e.avatar.vrm.meta.licenseName,
       hair: e.hair.style, hairMeshes: e.hair.current ? e.hair.current.meshes.length : 0, hairJoints: e.hair.current && e.hair.current.vrm.springBoneManager ? e.hair.current.vrm.springBoneManager.joints.size : 0,
@@ -276,7 +277,9 @@ async function stage(env) {
   check('capelli 3D montati sulla testa con spring bone', load.hair === 'long' && load.hairMeshes > 0 && load.hairJoints > 20 && load.hairParent, `${load.hair}: ${load.hairMeshes} mesh, ${load.hairJoints} giunti`);
   const slots = Object.keys(load.worn);
   check('outfit iniziale: 6 capi reali, skinnati sullo scheletro del corpo', slots.length === 6 && Object.values(load.worn).every((w) => w.tris > 100 && w.skinned), slots.map((s) => `${s}=${load.worn[s].item}`).join(' '));
-  check('dati esistenti: chi arriva dalla v0.2 conserva la testa fotografica come modalità attiva (avviso mostrato)', load.source === 'migrated' && load.headMode === 'photo' && load.noteShown);
+  check('dati esistenti: chi arriva dalla v0.2 conserva la testa fotografica come modalità attiva', load.source === 'migrated' && load.headMode === 'photo' && load.engineHead === 'photo');
+  check('volto: la texture della testa 3D è esattamente il file originale protetto (nessuna copia o rielaborazione)', !!load.ident && load.ident.textureSrc.endsWith('/assets/heads/' + load.photoId + '.png') && load.onHeadBone, load.ident && load.ident.textureSrc);
+  check('volto: viso anime nascosto e capelli tagliati davanti alla foto', load.animeFaceHidden && load.hairCut > 100, `${load.hairCut} triangoli di capelli nascosti`);
 
   // --- rendering ---
   const pix = await page.evaluate(() => {
@@ -406,6 +409,14 @@ async function stage(env) {
     return { quality: e.render.qualityName, outline: e.avatar.allOutlineMaterials().some((m) => m.visible), started, frame: document.body.dataset.frame, dist: d, statsText: document.querySelector('#stats').textContent };
   });
   check('interfaccia: preset Low senza contorni', uiLow.quality === 'low' && !uiLow.outline);
+  await page.click('#faces [data-face="3d"]');
+  await page.waitForFunction(() => window.__dcStage.engine.headMode === '3d' && window.__dcStage.def.head.mode === '3d', null, { timeout: 60000 });
+  const face3d = await page.evaluate(async () => { const e = window.__dcStage.engine; return { visible: e.avatar.face.skin.visible, cut: e.hair.hiddenTriangles, saved: (await chrome.storage.local.get('dc_avatar')).dc_avatar.head.mode }; });
+  await page.click('#faces [data-face="head_02"]');
+  await page.waitForFunction(() => window.__dcStage.engine.photoHead.id === 'head_02', null, { timeout: 60000 });
+  const face2 = await page.evaluate(async () => { const e = window.__dcStage.engine, st = await chrome.storage.local.get(['dc_avatar', 'dc_settings']); return { src: e.photoHead.identity().textureSrc, saved: st.dc_avatar.head, headId: st.dc_settings.headId, skin: e.avatar.skinTone }; });
+  check('interfaccia: "Viso 3D anime" ripristina viso e capelli completi e viene salvato', face3d.visible && face3d.cut === 0 && face3d.saved === '3d');
+  check('interfaccia: scelta di un\'altra foto applicata, salvata e condivisa col companion classico; carnagione dalla foto', face2.src.endsWith('/assets/heads/head_02.png') && face2.saved.mode === 'photo' && face2.saved.photoId === 'head_02' && face2.headId === 'head_02' && face2.skin === '#875f54', face2.skin);
   check('interfaccia: inquadratura "Viso" con transizione della camera', uiLow.frame === 'face' && uiLow.dist < 1.4, `distanza ${uiLow.dist.toFixed(2)} m`);
   check('interfaccia: pulsante "Saluto" avvia il gesto; statistiche reali del renderer', uiLow.started === 'wave' && /FPS · \d+k tri · \d+ draw/.test(uiLow.statsText), uiLow.statsText);
   await page.screenshot({ path: `${OUT}/31_stage_face_wave.png` });

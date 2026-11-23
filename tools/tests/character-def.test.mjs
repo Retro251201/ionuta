@@ -7,7 +7,7 @@ import { ITEM_BY_ID, SLOTS } from '../../extension/src/engine3d/wardrobe/catalog
 test('default: versione, modalità testa e outfit iniziale presente nel catalogo', () => {
   const d = defaultCharacter();
   assert.equal(d.v, CHARACTER_VERSION);
-  assert.equal(d.head.mode, '3d');
+  assert.equal(d.head.mode, 'photo', 'il volto predefinito è la foto originale');
   assert.equal(d.head.photoId, 'head_04');
   const slots = new Set(SLOTS.map((s) => s.id));
   for (const [slot, e] of Object.entries(d.outfit)) {
@@ -16,6 +16,13 @@ test('default: versione, modalità testa e outfit iniziale presente nel catalogo
     assert.equal(ITEM_BY_ID[e.item].slot, slot);
   }
   assert.notEqual(defaultCharacter().outfit, d.outfit, 'ogni chiamata restituisce una copia');
+});
+
+test('migrazione v1 → v2: il viso anime salvato dalla v1 torna alla testa fotografica; v2 rispetta la scelta', () => {
+  assert.equal(normalizeCharacter({ v: 1, head: { mode: '3d', photoId: 'head_02' } }).head.mode, 'photo');
+  assert.equal(normalizeCharacter({ v: 1, head: { mode: '3d', photoId: 'head_02' } }).head.photoId, 'head_02');
+  assert.equal(normalizeCharacter({ v: 2, head: { mode: '3d' } }).head.mode, '3d');
+  assert.equal(normalizeCharacter({ v: 2, head: { mode: 'photo', photoId: 42 } }).head.photoId, 'head_04');
 });
 
 test('normalizzazione: input non valido → default completo', () => {
@@ -29,7 +36,7 @@ test('normalizzazione: slider limitati a [-1, 1], valori non numerici scartati',
 });
 
 test('normalizzazione: colori non validi sostituiti, modalità testa sconosciuta → 3d', () => {
-  const d = normalizeCharacter({ eyes: { color: 'red' }, hair: { color: '#12345' }, skin: { tone: '#abcdef' }, head: { mode: 'hologram' } });
+  const d = normalizeCharacter({ eyes: { color: 'red' }, hair: { color: '#12345' }, skin: { tone: '#abcdef' }, head: { mode: 'hologram' }, v: CHARACTER_VERSION });
   const def = defaultCharacter();
   assert.equal(d.eyes.color, def.eyes.color);
   assert.equal(d.hair.color, def.hair.color);

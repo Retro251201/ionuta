@@ -1,0 +1,34 @@
+<!doctype html><meta charset="utf-8"><title>dev character</title>
+<style>html,body{margin:0;height:100%;background:#2b2e40;overflow:hidden}#stage{position:absolute;inset:0}</style>
+<div id="stage"></div>
+<script src="/extension/src/shared/heads.generated.js"></script>
+<script type="module">
+// Banco di prova del Character Engine completo (testa fotografica, capelli, guardaroba, animazioni).
+// Parametri: ?head=head_04|3d &hair=long &q=high &bg=hex|none &frame=full|upper|face &az=gradi &t=secondi
+import { THREE } from '/extension/src/engine3d/lib.js';
+import { CharacterEngine } from '/extension/src/engine3d/core/character-engine.js';
+import { defaultCharacter } from '/extension/src/engine3d/core/character-def.js';
+const q = new URLSearchParams(location.search);
+const HEADS = globalThis.DC.HEADS;
+const resolveHead = (h) => { const e = HEADS.find((x) => x.id === h.photoId); return e ? { ...e, url: '/extension/' + e.file } : null; };
+const def = defaultCharacter();
+const head = q.get('head') || 'head_04';
+if (head === '3d') def.head.mode = '3d'; else { def.head.mode = 'photo'; def.head.photoId = head; }
+if (q.get('hair')) def.hair.style = q.get('hair') === 'none' ? null : q.get('hair');
+const engine = new CharacterEngine(document.getElementById('stage'), { quality: q.get('q') || 'high', autoPause: false, resolveHead });
+await engine.load(def);
+engine.render.stop();
+const bg = q.get('bg') || '3a3d52';
+if (bg !== 'none') engine.render.setBackground(new THREE.Color('#' + bg));
+const orbit = (az = 0, frame = 'full') => {
+  engine.camera.frame(frame, { animate: false, lift: engine.wardrobe.groundOffset });
+  const c = engine.camera.controls, off = engine.camera.camera.position.clone().sub(c.target);
+  off.applyAxisAngle(new THREE.Vector3(0, 1, 0), az * Math.PI / 180);
+  engine.camera.camera.position.copy(c.target).add(off); c.update();
+};
+window.dev = { THREE, engine, orbit, step: (n = 1) => engine.step(n) };
+orbit(Number(q.get('az') || 0), q.get('frame') || 'full');
+if (q.get('look')) { const [x, y] = q.get('look').split(',').map(Number); engine.look.lookAt(x, y); }
+engine.step(Math.round(Number(q.get('t') || 1) * 30));
+window.__ready = true;
+</script>

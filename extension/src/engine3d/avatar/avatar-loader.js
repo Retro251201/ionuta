@@ -3,6 +3,8 @@
 import { THREE, VRM } from '../lib.js';
 
 export const BASE_AVATAR = 'avatar/base.vrm';
+/** Tono medio della texture della pelle del modello base: la carnagione si esprime rispetto a questo colore. */
+export const SKIN_REFERENCE = '#f6d3c0';
 
 const FACE_PARTS = [
   ['mouth', /FaceMouth/], ['eyeWhite', /EyeWhite/], ['eyeline', /FaceEyeline/], ['eyelash', /FaceEyelash/],
@@ -72,6 +74,46 @@ export class Avatar {
       boneNames: mesh.skeleton.bones.map((b) => b.name),
       skeleton: mesh.skeleton, bindMatrix: mesh.bindMatrix.clone()
     };
+  }
+
+  /**
+   * Misure della testa nello spazio locale dell'osso testa (metri, a riposo): quota del mento e centro del cranio
+   * in avanti (spazio canonico, fronte +Z). Ricavate dalla pelle del viso 3D; servono alla testa fotografica.
+   */
+  headMetrics() {
+    if (this._headMetrics) return this._headMetrics;
+    const head = this.restPosition('head'), mesh = this.face.skin;
+    let minY = Infinity, minZ = Infinity, maxZ = -Infinity;
+    if (mesh) {
+      const p = mesh.geometry.attributes.position, idx = mesh.geometry.index ? mesh.geometry.index.array : null;
+      const flip = this.isVRM0 ? -1 : 1, n = idx ? idx.length : p.count;
+      for (let k = 0; k < n; k++) {
+        const i = idx ? idx[k] : k, y = p.getY(i), z = p.getZ(i) * flip;
+        if (y < minY) minY = y;
+        if (z < minZ) minZ = z;
+        if (z > maxZ) maxZ = z;
+      }
+    }
+    this._headMetrics = isFinite(minY)
+      ? { chinY: minY - head.y, centerZ: (minZ + maxZ) / 2 - head.z, frontZ: maxZ - head.z }
+      : { chinY: -0.035, centerZ: 0.02, frontZ: 0.11 };
+    return this._headMetrics;
+  }
+
+  /**
+   * Carnagione: moltiplica i materiali della pelle in modo che il tono medio della texture (#f6d3c0) diventi `hex`.
+   * Con la testa fotografica il tono viene dalla foto, così collo, braccia e gambe si raccordano al viso reale.
+   */
+  setSkinTone(hex) {
+    const ref = new THREE.Color(SKIN_REFERENCE), t = new THREE.Color(hex);
+    const f = [t.r / ref.r, t.g / ref.g, t.b / ref.b].map((v) => Math.max(0.05, Math.min(1.25, v)));
+    for (const m of this.materials.skin) {
+      if (!m.userData.skinBase) m.userData.skinBase = { color: m.color ? m.color.clone() : null, shade: m.shadeColorFactor ? m.shadeColorFactor.clone() : null };
+      const b = m.userData.skinBase;
+      if (b.color) m.color.setRGB(b.color.r * f[0], b.color.g * f[1], b.color.b * f[2]);
+      if (b.shade) m.shadeColorFactor.setRGB(b.shade.r * f[0], b.shade.g * f[1], b.shade.b * f[2]);
+    }
+    this.skinTone = hex;
   }
 
   /** Posizione canonica (a riposo, T-pose) di un osso umanoide. */

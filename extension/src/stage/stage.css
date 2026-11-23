@@ -80,3 +80,6 @@ body:not([data-mode="3d"]) .rail { display: none; }
   .rail { right: 8px; }
 }
 @media (prefers-reduced-motion: reduce) { .dock, .spinner { animation: none; } }
+.faces button { display: inline-flex; align-items: center; gap: 6px; padding: 3px 12px 3px 3px; }
+.faces button img { width: 26px; height: 26px; object-fit: contain; border-radius: 50%; background: rgba(255, 255, 255, .08); }
+.faces button:not(:has(img)) { padding: 6px 12px; }
