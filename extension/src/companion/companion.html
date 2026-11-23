@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Companion</title>
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: transparent; font: 13px system-ui, sans-serif; }
+    #view { position: absolute; inset: 0; }
+    .bubble { position: absolute; left: 50%; top: 6%; transform: translateX(-50%); max-width: 84%; padding: 8px 13px; background: #fff; color: #2b2b3a; border: 2px solid #ffb3d4; border-radius: 15px; font-size: 13px; line-height: 1.35; box-shadow: 0 6px 18px #0004; opacity: 0; transition: opacity .25s; pointer-events: none; }
+    .bubble.show { opacity: 1; }
+    .msg { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; text-align: center; color: #cfc6e6; padding: 20px; }
+    body[data-mode="error"] .msg { display: flex; }
+  </style>
+</head>
+<body data-mode="loading">
+  <div id="view"></div>
+  <div class="bubble" id="bubble"></div>
+  <div class="msg">Il companion 3D richiede WebGL 2. Abilitalo nel browser per vederlo.</div>
+  <script src="../shared/heads.generated.js"></script>
+  <script src="../shared/skins.js"></script>
+  <script src="../shared/data.js"></script>
+  <script type="module" src="companion.js"></script>
+</body>
+</html>

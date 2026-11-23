@@ -20,28 +20,24 @@
   }
 
   // ---------- anteprime ----------
-  function makePreview(box) { const b = new DC.Body(); box.innerHTML = ''; box.appendChild(b.svg); bodies.push(b); return b; }
+  // Anteprima 3D: iframe verso la pagina companion (personaggio salvato). Niente più renderer 2D.
+  function makePreview(box) {
+    box.innerHTML = '';
+    const f = document.createElement('iframe');
+    f.src = chrome.runtime.getURL('src/companion/companion.html?static=1&frame=upper&q=low');
+    f.style.cssText = 'width:100%;height:100%;border:0;background:transparent;display:block;';
+    f.setAttribute('allowtransparency', 'true');
+    box.appendChild(f);
+    bodies.push(f);
+    return f;
+  }
   function applyLook() {
     const key = [S.headId, S.outfitId, S.hairStyle, S.hairColor, S.accessory, (DC.CUSTOM_HEADS || []).map((h) => h.id + h.createdAt).join(',')].join('|');
     if (key === lookKey) return; lookKey = key;
-    const h = DC.headById(S.headId), o = DC.outfitById(S.outfitId);
-    for (const b of bodies) {
-      b.look = { hair: S.hairStyle || 'long', hairColor: S.hairColor || '#3a2a33', accessory: S.accessory || 'none' };
-      b.outfit = o; b.setHead(h, DC.headUrl(h));
-    }
+    // il companion legge il personaggio salvato: dopo un cambio, ricarica le anteprime
+    for (const f of bodies) { try { f.contentWindow.location.reload(); } catch (e) { f.src = f.src; } }
   }
-  function animate(t) {
-    const s = t / 1000;
-    for (const b of bodies) {
-      const p = DC.Body.restPose();
-      p.sqy = 1 + 0.012 * Math.sin(s * 2.2); p.sqx = 1 - 0.006 * Math.sin(s * 2.2);
-      p.headTilt = 2.5 * Math.sin(s * 0.9); p.aR = [-10 - 4 * Math.sin(s * 1.3), 6]; p.aL = [10 + 3 * Math.sin(s * 1.1), -6];
-      p.skirt = 1.5 * Math.sin(s * 1.7);
-      if (ST && ST.sleeping) { p.headTilt = 12; p.aL = [4, -2]; p.aR = [-4, 2]; }
-      b.setPose(p);
-    }
-    requestAnimationFrame(animate);
-  }
+  function animate() { /* l'anteprima 3D si anima da sola nell'iframe */ }
 
   // ---------- render ----------
   function render() {

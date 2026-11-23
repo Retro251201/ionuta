@@ -12,7 +12,7 @@ import { PhotoHead } from '../custom/photo-head.js';
 import { AnimationController } from '../anim/animation-controller.js';
 import { LookController } from '../anim/look-controller.js';
 import { normalizeCharacter, MODEL_BY_ID, DEFAULT_MODEL } from './character-def.js';
-import { THREE } from '../lib.js';
+import { THREE, VRMA } from '../lib.js';
 import { Emitter } from './events.js';
 import { LIGHTING_PRESETS, LIGHTING_BY_ID } from '../render/lighting-presets.js';
 
@@ -63,6 +63,7 @@ export class CharacterEngine extends Emitter {
     }
     this.photoHead = new PhotoHead({ avatar: this.avatar, assets: this.assets });
     this.anim = new AnimationController({ avatar: this.avatar });
+    await this._loadMotions();
     this.look = new LookController({ avatar: this.avatar });
     this.camera = new CameraController(this.render, { interactive: o.interactive });
     if (o.interactive) {
@@ -97,6 +98,19 @@ export class CharacterEngine extends Emitter {
     await this._applyHead(d.head);
     this.emit('applied', { def: d, outfitErrors: res.errors });
     return d;
+  }
+
+  /** Carica le animazioni .vrma del pacchetto e le registra come clip riproducibili (retarget sul modello corrente). */
+  async _loadMotions() {
+    let index;
+    try { index = await this.assets.json('anim/index.json'); } catch (e) { return; }
+    for (const m of index) {
+      try {
+        const va = await this.assets.loadVRMA(m.file);
+        const clip = VRMA.createVRMAnimationClip(va, this.avatar.vrm);
+        this.anim.addClip({ id: m.id, name: m.name, clip, loop: !!m.loop, category: m.category });
+      } catch (e) { console.warn('[DC] animazione non caricata:', m.id, e.message); }
+    }
   }
 
   /** Quota del pavimento del modello corrente (scarpe del guardaroba o piedi del personaggio completo). */

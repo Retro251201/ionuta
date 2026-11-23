@@ -1,6 +1,6 @@
 // Asset Manager: caricamento pigro (lazy) degli asset LOCALI del pacchetto, cache con conteggio dei
 // riferimenti e rilascio della memoria GPU. Nessuna richiesta di rete esterna: tutto è sotto extension/assets.
-import { THREE, GLTFLoader, VRM } from '../lib.js';
+import { THREE, GLTFLoader, VRM, VRMA } from '../lib.js';
 
 const ASSET_BASE = new URL('../../../assets/', import.meta.url);
 
@@ -12,6 +12,8 @@ export class AssetManager {
     this.vrmLoader = new GLTFLoader();
     this.vrmLoader.register((p) => new VRM.VRMLoaderPlugin(p, { autoUpdateHumanBones: true }));
     this.gltfLoader = new GLTFLoader();
+    this.vrmaLoader = new GLTFLoader();
+    this.vrmaLoader.register((p) => new VRMA.VRMAnimationLoaderPlugin(p));
     this.stats = { requests: 0, bytes: 0 };
   }
 
@@ -46,6 +48,15 @@ export class AssetManager {
   async loadGLTF(rel) {
     const buf = await this.buffer(rel);
     return this.gltfLoader.parseAsync(buf, this.url(rel).replace(/[^/]*$/, ''));
+  }
+
+  /** Animazione VRM (.vrma): restituisce il primo oggetto VRMAnimation del file. */
+  async loadVRMA(rel) {
+    const buf = await this.buffer(rel);
+    const gltf = await this.vrmaLoader.parseAsync(buf, this.url(rel).replace(/[^/]*$/, ''));
+    const list = gltf.userData.vrmAnimations;
+    if (!list || !list.length) throw new Error('nessuna animazione VRM in ' + rel);
+    return list[0];
   }
 
   /** Dimentica i byte di un file (libera RAM dopo l'istanziazione, se non serve ricaricarlo). */

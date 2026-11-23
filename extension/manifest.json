@@ -45,8 +45,6 @@
         "src/shared/heads.generated.js",
         "src/shared/skins.js",
         "src/shared/data.js",
-        "src/engine/body.js",
-        "src/engine/companion.js",
         "src/content/content.js"
       ],
       "run_at": "document_idle",
@@ -56,8 +54,12 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "assets/heads/*",
-        "assets/icons/*"
+        "assets/*",
+        "src/companion/*",
+        "src/engine3d/*",
+        "src/shared/*",
+        "src/stage/*",
+        "vendor/*"
       ],
       "matches": [
         "<all_urls>"

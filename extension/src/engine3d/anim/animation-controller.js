@@ -28,8 +28,21 @@ export class AnimationController extends Emitter {
     this.mixer.addEventListener('finished', this._onFinished);
   }
 
-  /** Clip disponibili. */
-  list() { return CLIPS.map((c) => ({ id: c.id, name: c.name, category: c.category, loop: c.loop, duration: c.duration })); }
+  /** Clip esterne (file .vrma) registrate in aggiunta a quelle native. id → {clip, def}. */
+  _ext = new Map();
+
+  /** Registra una AnimationClip di three.js (es. da un .vrma) come clip riproducibile. */
+  addClip({ id, name, clip, loop = false, category = 'motion' }) {
+    if (!id || !clip) return false;
+    this._ext.set(id, { clip, def: { id, name: name || id, loop, category, duration: clip.duration } });
+    return true;
+  }
+
+  /** Clip disponibili (native + esterne). */
+  list() {
+    return [...CLIPS.map((c) => ({ id: c.id, name: c.name, category: c.category, loop: c.loop, duration: c.duration })),
+      ...[...this._ext.values()].map((e) => ({ ...e.def }))];
+  }
   get base() { return this._base ? this._base.id : null; }
   get current() { return this._gesture ? this._gesture.id : this.base; }
 
@@ -37,6 +50,15 @@ export class AnimationController extends Emitter {
   _action(id) {
     let a = this._actions.get(id);
     if (a) return a;
+    // clip esterna (.vrma): la AnimationClip è già retargettata sul VRM corrente da createVRMAnimationClip
+    const ext = this._ext.get(id);
+    if (ext) {
+      a = this.mixer.clipAction(ext.clip);
+      a.id = id; a.def = ext.def;
+      if (ext.def.loop) a.setLoop(THREE.LoopRepeat, Infinity); else { a.setLoop(THREE.LoopOnce, 1); a.clampWhenFinished = true; }
+      this._actions.set(id, a);
+      return a;
+    }
     const def = CLIP_BY_ID[id];
     if (!def) return null;
     const baked = bakeClip(def), hum = this.avatar.humanoid, tracks = [];
