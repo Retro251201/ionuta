@@ -12,6 +12,10 @@ export const CHARACTER_MODELS = [
   { id: 'victoria', name: 'Victoria', file: 'avatar/models/victoria.vrm', kind: 'full' },
   { id: 'vita', name: 'Vita', file: 'avatar/models/vita.vrm', kind: 'full' },
   { id: 'shino', name: 'Shino', file: 'avatar/models/shino.vrm', kind: 'full' },
+  { id: 'darkness', name: 'Darkness', file: 'avatar/models/darkness.vrm', kind: 'full' },
+  { id: 'nyan', name: 'Nyan', file: 'avatar/models/nyan.vrm', kind: 'full' },
+  { id: 'fumi', name: 'Fumi', file: 'avatar/models/fumi.vrm', kind: 'full' },
+  { id: 'sendagaya', name: 'Aoi', file: 'avatar/models/sendagaya.vrm', kind: 'full' },
   { id: 'female', name: 'Corpo personalizzabile', file: 'avatar/female.vrm', kind: 'base' }
 ];
 export const MODEL_BY_ID = Object.fromEntries(CHARACTER_MODELS.map((m) => [m.id, m]));

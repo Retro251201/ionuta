@@ -12,7 +12,7 @@
  {
   "id": "victoria",
   "name": "Victoria",
-  "desc": "Elegante, capelli corti, look scuro",
+  "desc": "Elegante, coda bionda, abito rosa",
   "file": "avatar/models/victoria.vrm",
   "kind": "full",
   "source": "Victoria_Rubin",
@@ -22,7 +22,7 @@
  {
   "id": "vita",
   "name": "Vita",
-  "desc": "Cyber, pixie, stile futuristico",
+  "desc": "Cyber, pixie bianco, body futuristico",
   "file": "avatar/models/vita.vrm",
   "kind": "full",
   "source": "Vita",
@@ -32,11 +32,51 @@
  {
   "id": "shino",
   "name": "Shino",
-  "desc": "Intensa, capelli lunghi",
+  "desc": "Intensa, capelli lunghi, uniforme",
   "file": "avatar/models/shino.vrm",
   "kind": "full",
   "source": "Sendagaya_Shino",
   "license": "CC0-1.0",
   "tris": 31211
+ },
+ {
+  "id": "darkness",
+  "name": "Darkness",
+  "desc": "Gothic, capelli magenta, abito scuro",
+  "file": "avatar/models/darkness.vrm",
+  "kind": "full",
+  "source": "Darkness_Shibu",
+  "license": "CC0-1.0",
+  "tris": 33758
+ },
+ {
+  "id": "nyan",
+  "name": "Nyan",
+  "desc": "Orecchie da gatto, codini, abito bianco",
+  "file": "avatar/models/nyan.vrm",
+  "kind": "full",
+  "source": "HairSample_Female",
+  "license": "CC0-1.0",
+  "tris": 27068
+ },
+ {
+  "id": "fumi",
+  "name": "Fumi",
+  "desc": "Boyish, capelli rosa, look sbarazzino",
+  "file": "avatar/models/fumi.vrm",
+  "kind": "full",
+  "source": "Sakurada_Fumiriya",
+  "license": "CC0-1.0",
+  "tris": 39548
+ },
+ {
+  "id": "sendagaya",
+  "name": "Aoi",
+  "desc": "Schoolgirl, caschetto blu notte",
+  "file": "avatar/models/sendagaya.vrm",
+  "kind": "full",
+  "source": "Sendagaya_Shibu",
+  "license": "CC0-1.0",
+  "tris": 34395
  }
 ]

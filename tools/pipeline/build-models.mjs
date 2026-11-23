@@ -17,9 +17,13 @@ fs.mkdirSync(outDir, { recursive: true });
 // id → [sorgente in sources.mjs, nome mostrato, descrizione breve]
 const CHARACTERS = {
   vivi: ['Vivi', 'Vivi', 'Dolce, caschetto castano, abito verde'],
-  victoria: ['Victoria_Rubin', 'Victoria', 'Elegante, capelli corti, look scuro'],
-  vita: ['Vita', 'Vita', 'Cyber, pixie, stile futuristico'],
-  shino: ['Sendagaya_Shino', 'Shino', 'Intensa, capelli lunghi']
+  victoria: ['Victoria_Rubin', 'Victoria', 'Elegante, coda bionda, abito rosa'],
+  vita: ['Vita', 'Vita', 'Cyber, pixie bianco, body futuristico'],
+  shino: ['Sendagaya_Shino', 'Shino', 'Intensa, capelli lunghi, uniforme'],
+  darkness: ['Darkness_Shibu', 'Darkness', 'Gothic, capelli magenta, abito scuro'],
+  nyan: ['HairSample_Female', 'Nyan', 'Orecchie da gatto, codini, abito bianco'],
+  fumi: ['Sakurada_Fumiriya', 'Fumi', 'Boyish, capelli rosa, look sbarazzino'],
+  sendagaya: ['Sendagaya_Shibu', 'Aoi', 'Schoolgirl, caschetto blu notte']
 };
 
 async function encodeImage(buf, mime, name) {
